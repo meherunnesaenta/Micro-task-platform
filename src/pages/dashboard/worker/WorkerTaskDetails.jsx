@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { taskAPI, submissionAPI } from '../../utils/endpoints';
+import { taskAPI, submissionAPI } from '../../../utils/endpoints';
 import { ArrowLeft, Loader, CheckCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
-import '../../styles/task-details.css';
+import '../../../styles/task-details.css';
 
 const WorkerTaskDetails = () => {
   const { taskId } = useParams();

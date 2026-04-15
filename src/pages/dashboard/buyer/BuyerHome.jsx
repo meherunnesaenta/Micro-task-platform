@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { taskAPI } from '../../utils/endpoints';
+import { useAuth } from '../../../context/AuthContext';
+import { taskAPI } from '../../../utils/endpoints';
 import { BarChart3, Clock, DollarSign } from 'lucide-react';
-import '../../styles/buyer-dashboard.css';
+import '../../../styles/buyer-dashboard.css';
+import { Link } from 'react-router-dom';
 
 const BuyerHome = () => {
   const { user } = useAuth();
@@ -79,34 +80,34 @@ const BuyerHome = () => {
         <h2>Welcome back, {user?.name}!</h2>
         <p>Manage your tasks and track worker submissions efficiently.</p>
         <div className="action-buttons">
-          <a href="/dashboard/buyer/add-task" className="btn btn-primary">
+          <Link to="/dashboard/buyer/add-task" className="btn btn-primary">
             Create New Task
-          </a>
-          <a href="/dashboard/buyer/review" className="btn btn-secondary">
+          </Link>
+          <Link to="/dashboard/buyer/review" className="btn btn-secondary">
             Review Submissions
-          </a>
+          </Link>
         </div>
       </div>
 
       <div className="quick-actions">
         <h3>Quick Actions</h3>
         <div className="actions-grid">
-          <a href="/dashboard/buyer/my-tasks" className="action-card">
+          <Link to="/dashboard/buyer/my-tasks" className="action-card">
             <span className="action-number">{stats.totalTasks}</span>
             <span className="action-label">View My Tasks</span>
-          </a>
-          <a href="/dashboard/buyer/review" className="action-card">
+          </Link>
+          <Link to="/dashboard/buyer/review" className="action-card">
             <span className="action-number">0</span>
             <span className="action-label">Pending Reviews</span>
-          </a>
-          <a href="/dashboard/buyer/purchase-coin" className="action-card">
+          </Link>
+          <Link to="/dashboard/buyer/purchase-coin" className="action-card">
             <span className="action-icon">🪙</span>
             <span className="action-label">Purchase Coins</span>
-          </a>
-          <a href="/dashboard/buyer/payment-history" className="action-card">
+          </Link>
+          <Link to="/dashboard/buyer/payment-history" className="action-card">
             <span className="action-icon">📊</span>
             <span className="action-label">Payment History</span>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

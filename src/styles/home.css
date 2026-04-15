@@ -42,7 +42,7 @@
   position: relative;
   z-index: 2;
   text-align: center;
-  color: white;
+  color: base-100;
   max-width: 600px;
   animation: slideUp 0.8s ease-out;
 }
@@ -76,7 +76,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.875rem 2rem;
-  background-color: white;
+  background-color: base-100;
   color: #667eea;
   text-decoration: none;
   border-radius: 8px;
@@ -96,12 +96,12 @@
 }
 
 :global(.swiper-pagination-bullet-active) {
-  background-color: white;
+  background-color: base-100;
 }
 
 :global(.swiper-button-next),
 :global(.swiper-button-prev) {
-  color: white;
+  color: base-100;
   width: 50px;
   height: 50px;
   background-color: rgba(0, 0, 0, 0.3);
@@ -139,7 +139,7 @@
 /* Features Section */
 .features-section {
   padding: 4rem 0;
-  background: white;
+  background: base-100;
   margin: 2rem 0;
 }
 
@@ -173,7 +173,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: base-100;
   margin: 0 auto 1rem;
 }
 
@@ -202,7 +202,7 @@
 }
 
 .worker-card {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
@@ -268,7 +268,7 @@
 /* Testimonials Section */
 .testimonials-section {
   padding: 4rem 0;
-  background: white;
+  background: base-100;
 }
 
 .testimonials-slider {
@@ -339,7 +339,7 @@
 }
 
 .step-card {
-  background: white;
+  background: base-100;
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
@@ -357,7 +357,7 @@
   width: 50px;
   height: 50px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: base-100;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -394,7 +394,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 4rem 2rem;
   text-align: center;
-  color: white;
+  color: base-100;
 }
 
 .cta-content h2 {
@@ -425,7 +425,7 @@
 }
 
 .cta-btn.primary {
-  background-color: white;
+  background-color: base-100;
   color: #667eea;
 }
 
@@ -435,13 +435,13 @@
 }
 
 .cta-btn.secondary {
-  border: 2px solid white;
-  color: white;
+  border: 2px solid base-100;
+  color: base-100;
   background-color: transparent;
 }
 
 .cta-btn.secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: base-200;
   transform: translateY(-3px);
 }
 

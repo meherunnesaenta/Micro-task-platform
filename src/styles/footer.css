@@ -98,7 +98,7 @@
 
 .social-link:hover {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: base-100;
   transform: translateY(-5px);
   border-color: #764ba2;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);

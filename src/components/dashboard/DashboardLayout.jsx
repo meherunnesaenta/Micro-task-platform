@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { Menu, X, LogOut, Bell, Settings } from 'lucide-react';
-import '../styles/dashboard.css';
+import '../../styles/dashboard.css';
+import { Link } from 'react-router-dom';
 
 const DashboardLayout = ({ children, sidebarItems }) => {
   const { user, logout } = useAuth();
@@ -56,9 +57,9 @@ const DashboardLayout = ({ children, sidebarItems }) => {
                 </div>
               </div>
               <hr />
-              <a href="/profile" className="dropdown-link">
+              <Link to="/profile" className="dropdown-link">
                 <Settings size={16} /> Profile Settings
-              </a>
+              </Link>
               <button className="dropdown-link logout-link" onClick={handleLogout}>
                 <LogOut size={16} /> Logout
               </button>
@@ -72,16 +73,16 @@ const DashboardLayout = ({ children, sidebarItems }) => {
         <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
           <nav className="sidebar-nav">
             {sidebarItems?.map((item) => (
-              <a
+              <Link
                 key={item.path}
-                href={item.path}
+                to={item.path}
                 className={`sidebar-item ${
                   window.location.pathname === item.path ? 'active' : ''
                 }`}
               >
                 <span className="sidebar-icon">{item.icon}</span>
                 <span className="sidebar-label">{item.label}</span>
-              </a>
+              </Link>
             ))}
           </nav>
         </aside>

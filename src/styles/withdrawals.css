@@ -28,7 +28,7 @@
 
 .withdrawal-form-card,
 .withdrawal-history-card {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -160,7 +160,7 @@
 
 .withdraw-btn {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  color: base-100;
   border: none;
   padding: 0.875rem 1.5rem;
   border-radius: 8px;
@@ -278,7 +278,7 @@
 
 /* Withdrawal Info */
 .withdrawal-info {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);

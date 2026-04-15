@@ -20,7 +20,7 @@
 }
 
 .submissions-table-container {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -44,7 +44,7 @@
   font-weight: 700;
   color: #1a1a2e;
   font-size: 0.95rem;
-  white-space: nowrap;
+  base-100-space: nowrap;
 }
 
 .submissions-table tbody tr {
@@ -66,7 +66,7 @@
   font-weight: 600;
   color: #1a1a2e;
   max-width: 250px;
-  white-space: nowrap;
+  base-100-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -85,7 +85,7 @@
   border-radius: 20px;
   font-weight: 600;
   font-size: 0.85rem;
-  white-space: nowrap;
+  base-100-space: nowrap;
 }
 
 .status-badge.success {
@@ -122,7 +122,7 @@
 
 .details-btn {
   background: #667eea;
-  color: white;
+  color: base-100;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -163,7 +163,7 @@
 
 /* Empty State */
 .empty-state {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
@@ -191,7 +191,7 @@
 
 .pagination button {
   padding: 0.5rem 1rem;
-  background: white;
+  background: base-100;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   cursor: pointer;
@@ -207,7 +207,7 @@
 
 .pagination button.active {
   background: #667eea;
-  color: white;
+  color: base-100;
   border-color: #667eea;
 }
 

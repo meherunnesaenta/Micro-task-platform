@@ -5,7 +5,7 @@
 }
 
 .stat-card {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
@@ -27,7 +27,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: base-100;
   flex-shrink: 0;
 }
 
@@ -47,7 +47,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 12px;
   padding: 2rem;
-  color: white;
+  color: base-100;
   margin: 2rem 0;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .btn-primary {
-  background-color: white;
+  background-color: base-100;
   color: #667eea;
 }
 
@@ -91,8 +91,8 @@
 
 .btn-secondary {
   background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid white;
+  color: base-100;
+  border: 2px solid base-100;
 }
 
 .btn-secondary:hover {
@@ -117,7 +117,7 @@
 }
 
 .action-card {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;

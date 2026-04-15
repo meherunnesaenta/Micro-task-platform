@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { User, Mail, Lock, Briefcase, AlertCircle, Loader } from 'lucide-react';
 import { toast } from 'react-toastify';
-import '../styles/auth.css';
+import '../../styles/auth.css';
 
 const Register = () => {
   const {

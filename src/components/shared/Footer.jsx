@@ -1,37 +1,16 @@
 import React from 'react';
-import { Facebook, Github, Linkedin, Twitter } from 'lucide-react';
-import '../styles/footer.css';
+import { FaGithub, FaEnvelope, FaPhone, FaMapMarker } from 'react-icons/fa';
+import '../../styles/footer.css';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  const socialLinks = [
-    {
-      name: 'LinkedIn',
-      icon: <Linkedin size={20} />,
-      url: 'https://linkedin.com/in/yourprofile',
-    },
-    {
-      name: 'GitHub',
-      icon: <Github size={20} />,
-      url: 'https://github.com/yourprofile',
-    },
-    {
-      name: 'Twitter',
-      icon: <Twitter size={20} />,
-      url: 'https://twitter.com/yourprofile',
-    },
-    {
-      name: 'Facebook',
-      icon: <Facebook size={20} />,
-      url: 'https://facebook.com/yourprofile',
-    },
-  ];
 
   return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-content">
+          {/* Company Info */}
           <div className="footer-section">
             <h3 className="footer-logo">
               <span className="logo-icon">💼</span> MicroTask
@@ -40,49 +19,102 @@ const Footer = () => {
               Earn money by completing micro-tasks or hire workers to get your
               tasks done.
             </p>
+            <div className="footer-contact">
+              <div className="contact-item">
+                <FaEnvelope size={18} />
+                <span>contact@microtask.com</span>
+              </div>
+              <div className="contact-item">
+                <FaPhone size={18} />
+                <span>+1 (555) 123-4567</span>
+              </div>
+              <div className="contact-item">
+                <FaMapMarker size={18} />
+                <span>123 Tech Street, San Francisco, CA</span>
+              </div>
+            </div>
           </div>
 
+          {/* Quick Links */}
           <div className="footer-section">
             <h4 className="footer-title">Quick Links</h4>
             <ul className="footer-links">
               <li>
-                <a href="/">Home</a>
+                <Link to="/">Home</Link>
               </li>
               <li>
-                <a href="/dashboard">Dashboard</a>
+                <Link to="/register">Register</Link>
               </li>
               <li>
-                <a href="/about">About Us</a>
+                <Link to="/login">Login</Link >
               </li>
               <li>
-                <a href="/contact">Contact</a>
+                <Link to="/about">About Us</Link>
+              </li>
+              <li>
+                <Link to="/contact">Contact</Link>
               </li>
             </ul>
           </div>
 
+          {/* Resources */}
           <div className="footer-section">
-            <h4 className="footer-title">Social Media</h4>
+            <h4 className="footer-title">Resources</h4>
+            <ul className="footer-links">
+              <li>
+                <Link to="/how-it-works">How It Works</Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link to="/terms-of-service">Terms of Service</Link>
+              </li>
+              <li>
+                <Link to="/faq">FAQ</Link>
+              </li>
+              <li>
+                <Link to="/support">Support</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social Media */}
+          <div className="footer-section">
+            <h4 className="footer-title">Follow Us</h4>
             <div className="social-links">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                  title={social.name}
-                >
-                  {social.icon}
-                </a>
-              ))}
+              <Link
+                to="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-link"
+                title="GitHub"
+              >
+                <FaGithub size={24} />
+              </Link>
+              <Link
+                to="mailto:contact@microtask.com"
+                className="social-link"
+                title="Email"
+              >
+                <FaEnvelope size={24} />
+              </Link>
+              <Link
+                to="tel:+15551234567"
+                className="social-link"
+                title="Call Us"
+              >
+                <FaPhone size={24} />
+              </Link>
             </div>
           </div>
         </div>
 
+        {/* Footer Bottom */}
         <div className="footer-bottom">
           <p>
             &copy; {currentYear} MicroTask Platform. All rights reserved. Built
-            with ❤️ by Your Name
+            with ❤️
           </p>
         </div>
       </div>

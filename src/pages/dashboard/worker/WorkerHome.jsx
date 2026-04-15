@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { submissionAPI } from '../../utils/endpoints';
+import { useAuth } from '../../../context/AuthContext';
+import { taskAPI, submissionAPI } from '../../../utils/endpoints';
 import { AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import '../../styles/worker-dashboard.css';
+import '../../../styles/worker-dashboard.css';
+import { Link } from 'react-router-dom';
 
 const WorkerHome = () => {
   const { user } = useAuth();
@@ -72,12 +73,12 @@ const WorkerHome = () => {
         <h2>Welcome, {user?.name}!</h2>
         <p>You have completed {stats.totalSubmissions} tasks and earned ${stats.totalEarnings} so far.</p>
         <div className="action-buttons">
-          <a href="/dashboard/worker/tasks" className="btn btn-primary">
+          <Link to="/dashboard/worker/tasks" className="btn btn-primary">
             Browse Tasks
-          </a>
-          <a href="/dashboard/worker/submiss ions" className="btn btn-secondary">
+          </Link>
+          <Link to="/dashboard/worker/submissions" className="btn btn-secondary">
             View Submissions
-          </a>
+          </Link>
         </div>
       </div>
 

@@ -49,7 +49,7 @@
 
 .success-banner {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  color: base-100;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   display: flex;
@@ -78,7 +78,7 @@
 
 .task-details-card,
 .submission-form-card {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -130,7 +130,7 @@
 
 .meta-value.badge {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: base-100;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -231,7 +231,7 @@
 
 .submit-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: base-100;
   border: none;
   padding: 1rem;
   border-radius: 8px;
@@ -316,7 +316,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: white;
+  background: base-100;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   padding: 0.75rem 1rem;
@@ -350,7 +350,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: white;
+  background: base-100;
   border: 2px solid #667eea;
   color: #667eea;
   padding: 0.75rem 1.5rem;
@@ -362,13 +362,13 @@
 
 .filter-btn:hover {
   background: #667eea;
-  color: white;
+  color: base-100;
   transform: translateY(-2px);
 }
 
 /* Empty State */
 .empty-state {
-  background: white;
+  background: base-100;
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
@@ -412,7 +412,7 @@
 
 .pagination button {
   padding: 0.5rem 1rem;
-  background: white;
+  background: base-100;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   cursor: pointer;
@@ -427,7 +427,7 @@
 
 .pagination button.active {
   background: #667eea;
-  color: white;
+  color: base-100;
   border-color: #667eea;
 }
 

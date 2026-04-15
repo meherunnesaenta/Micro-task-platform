@@ -8,7 +8,7 @@
 
 .dashboard-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: base-100;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
@@ -26,7 +26,7 @@
   display: none;
   background: none;
   border: none;
-  color: white;
+  color: base-100;
   cursor: pointer;
   font-size: 1.5rem;
 }
@@ -61,7 +61,7 @@
   position: relative;
   background: none;
   border: none;
-  color: white;
+  color: base-100;
   cursor: pointer;
   font-size: 1.2rem;
   transition: transform 0.2s ease;
@@ -76,7 +76,7 @@
   top: -5px;
   right: -10px;
   background-color: #e74c3c;
-  color: white;
+  color: base-100;
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -96,7 +96,7 @@
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
-  border: 2px solid white;
+  border: 2px solid base-100;
   object-fit: cover;
   transition: transform 0.2s ease;
 }
@@ -109,7 +109,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background: white;
+  background: base-100;
   min-width: 250px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -200,7 +200,7 @@
 
 .sidebar {
   width: 250px;
-  background: white;
+  background: base-100;
   border-right: 1px solid #e0e0e0;
   overflow-y: auto;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);

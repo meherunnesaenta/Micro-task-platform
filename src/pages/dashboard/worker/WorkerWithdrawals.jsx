@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../../context/AuthContext';
-import { withdrawalAPI } from '../../utils/endpoints';
+import { useAuth } from '../../../context/AuthContext';
+import { withdrawalAPI } from '../../../utils/endpoints';
 import { AlertCircle, CheckCircle, Clock, DollarSign } from 'lucide-react';
 import { toast } from 'react-toastify';
-import '../../styles/withdrawals.css';
+import '../../../styles/withdrawals.css';
 
 const WorkerWithdrawals = () => {
   const { user } = useAuth();

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { submissionAPI } from '../../utils/endpoints';
+import { submissionAPI } from '../../../utils/endpoints';
 import { Clock, CheckCircle, XCircle, Loader } from 'lucide-react';
-import '../../styles/submissions.css';
+import '../../../styles/submissions.css';
 
 const WorkerSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);

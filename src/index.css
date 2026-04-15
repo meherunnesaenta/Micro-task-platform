@@ -1,111 +1,387 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "daisyui";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/* ========================================
+   CUSTOM THEME - MICRO TASK PLATFORM
+   ======================================== */
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Light Theme - Daylight Mode */
+@plugin "daisyui/theme" {
+  name: "microtask-light";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  /* Base Colors - Clean base-100 Background */
+  --color-base-100: #ffffff;
+  --color-base-200: #f9fafb;
+  --color-base-300: #f3f4f6;
+  --color-base-content: #1f2937;
+
+  /* Primary Colors - Vibrant Purple for Task Actions */
+  --color-primary: #8b5cf6;
+  --color-primary-content: #ffffff;
+
+  /* Secondary Colors - Teal for Earnings */
+  --color-secondary: #14b8a6;
+  --color-secondary-content: #ffffff;
+
+  /* Accent Colors - Orange for Urgent Tasks */
+  --color-accent: #f59e0b;
+  --color-accent-content: #ffffff;
+
+  /* Neutral Colors */
+  --color-neutral: #6b7280;
+  --color-neutral-content: #ffffff;
+
+  /* Status Colors */
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #ffffff;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --radius-box: 1rem;
+  --radius-field: 0.5rem;
+  --radius-selector: 0.5rem;
+}
+
+/* Dark Theme - Night Mode */
+@plugin "daisyui/theme" {
+  name: "microtask-dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  /* Base Colors - Dark Theme for Night Workers */
+  --color-base-100: #0f0f13;
+  --color-base-200: #1a1a23;
+  --color-base-300: #252532;
+  --color-base-content: #e5e7eb;
+
+  /* Primary Colors - Neon Purple */
+  --color-primary: #a78bfa;
+  --color-primary-content: #0f0f13;
+
+  /* Secondary Colors - Neon Teal */
+  --color-secondary: #2dd4bf;
+  --color-secondary-content: #0f0f13;
+
+  /* Accent Colors - Neon Orange */
+  --color-accent: #fbbf24;
+  --color-accent-content: #0f0f13;
+
+  /* Neutral Colors */
+  --color-neutral: #4b5563;
+  --color-neutral-content: #e5e7eb;
+
+  /* Status Colors */
+  --color-info: #60a5fa;
+  --color-info-content: #0f0f13;
+  --color-success: #34d399;
+  --color-success-content: #0f0f13;
+  --color-warning: #fbbf24;
+  --color-warning-content: #0f0f13;
+  --color-error: #f87171;
+  --color-error-content: #0f0f13;
+
+  --radius-box: 1rem;
+  --radius-field: 0.5rem;
+  --radius-selector: 0.5rem;
+}
+
+/* ========================================
+   GRADIENT UTILITIES
+   ======================================== */
+
+@layer utilities {
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  }
+  
+  .bg-gradient-cta {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+  
+  .shadow-glow-dark {
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+  }
+  
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* ========================================
+   ANIMATIONS
+   ======================================== */
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-base-200);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
 }
 
 body {
-  margin: 0;
+  background: var(--color-base-100);
+  min-height: 100vh;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* ========================================
+   CUSTOM COMPONENT STYLES
+   ======================================== */
+
+/* Task Card Styles */
+.task-card {
+  @apply bg-base-100 rounded-box shadow-lg p-6 transition-all duration-300;
+  border: 1px solid var(--color-base-200);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.task-card:hover {
+  @apply shadow-xl;
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+/* Coin Display */
+.coin-badge {
+  @apply badge gap-1 font-semibold;
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+}
+
+/* Dashboard Stats Card */
+.stat-card {
+  @apply bg-base-100 rounded-box shadow-md p-6 transition-all duration-300;
+  border: 1px solid var(--color-base-200);
+}
+
+.stat-card:hover {
+  @apply shadow-lg;
+  transform: translateY(-2px);
+}
+
+.stat-value {
+  @apply text-3xl font-bold;
+  color: var(--color-primary);
+}
+
+.stat-label {
+  @apply text-sm uppercase tracking-wide font-medium;
+  color: var(--color-base-content);
+  opacity: 0.7;
+}
+
+/* Notification Popup */
+.notification-popup {
+  @apply fixed top-20 right-4 z-50 w-80;
+  animation: slide-in 0.3s ease-out;
+}
+
+.notification-item {
+  @apply bg-base-100 rounded-box shadow-lg p-4 mb-2 cursor-pointer transition-all duration-200;
+  border-left: 4px solid var(--color-primary);
+}
+
+.notification-item:hover {
+  @apply bg-base-200;
+  transform: translateX(-4px);
+}
+
+/* Table Styles */
+.table-modern {
+  @apply w-full;
+}
+
+.table-modern th {
+  @apply bg-base-200 text-base-content font-semibold p-3 text-left;
+}
+
+.table-modern td {
+  @apply border-b border-base-200 p-3;
+}
+
+.table-modern tr:hover {
+  @apply bg-base-200;
+}
+
+/* Form Styles */
+.input-modern {
+  @apply input w-full;
+  @apply border-base-300 focus:border-primary focus:outline-none;
+}
+
+.textarea-modern {
+  @apply textarea w-full;
+  @apply border-base-300 focus:border-primary focus:outline-none;
+}
+
+.select-modern {
+  @apply select w-full;
+  @apply border-base-300 focus:border-primary focus:outline-none;
+}
+
+/* Button Styles */
+.btn-gradient {
+  @apply btn border-0 text-base-100;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+}
+
+/* Responsive Grid */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  @apply w-8 h-8 border-4 rounded-full;
+  border-color: var(--color-primary);
+  border-top-color: transparent;
+  animation: spin-slow 0.8s linear infinite;
+}
+
+/* Dashboard Layout */
+.dashboard-layout {
+  @apply flex min-h-screen;
+}
+
+.dashboard-sidebar {
+  @apply w-64 bg-base-200 border-r border-base-300 transition-all duration-300;
+}
+
+.dashboard-main {
+  @apply flex-1 p-6 overflow-x-auto;
+}
+
+@media (max-width: 768px) {
+  .dashboard-sidebar {
+    @apply fixed left-0 top-0 h-full z-40;
+    transform: translateX(-100%);
+  }
+  
+  .dashboard-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .dashboard-main {
+    @apply p-4;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Container */
+.container-modern {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }

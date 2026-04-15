@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { taskAPI } from '../../utils/endpoints';
+import { taskAPI } from '../../../utils/endpoints';
 import { Search, Filter, Loader } from 'lucide-react';
-import '../../styles/worker-dashboard.css';
+import '../../../styles/worker-dashboard.css';
 
 const WorkerTaskList = () => {
   const [tasks, setTasks] = useState([]);

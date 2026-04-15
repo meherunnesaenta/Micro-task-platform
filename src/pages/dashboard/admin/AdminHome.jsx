@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { adminAPI } from '../../utils/endpoints';
+import { adminAPI } from '../../../utils/endpoints' ;
 import { Users, Briefcase, DollarSign, TrendingUp } from 'lucide-react';
-import '../../styles/admin-dashboard.css';
+import '../../../styles/admin-dashboard.css';
+import { Link } from 'react-router-dom';
 
 const AdminHome = () => {
   const [stats, setStats] = useState({
@@ -88,29 +89,29 @@ const AdminHome = () => {
       <div className="management-section">
         <h2>Management Options</h2>
         <div className="management-grid">
-          <a href="/dashboard/admin/users" className="management-card">
+          <Link to="/dashboard/admin/users" className="management-card">
             <div className="card-icon">👥</div>
             <h3>Manage Users</h3>
             <p>View, edit, and manage platform users</p>
-          </a>
+          </Link>
 
-          <a href="/dashboard/admin/tasks" className="management-card">
+          <Link to="/dashboard/admin/tasks" className="management-card">
             <div className="card-icon">📋</div>
             <h3>Manage Tasks</h3>
             <p>Monitor and manage all tasks on the platform</p>
-          </a>
+          </Link>
 
-          <a href="/dashboard/admin/withdrawals" className="management-card">
+          <Link to="/dashboard/admin/withdrawals" className="management-card">
             <div className="card-icon">💰</div>
             <h3>Withdrawal Requests</h3>
             <p>Approve or reject worker withdrawals</p>
-          </a>
+          </Link>
 
-          <a href="/dashboard/admin/reports" className="management-card">
+          <Link to="/dashboard/admin/reports" className="management-card">
             <div className="card-icon">⚠️</div>
             <h3>Handle Reports</h3>
             <p>Review and handle user reports</p>
-          </a>
+          </Link>
         </div>
       </div>
 

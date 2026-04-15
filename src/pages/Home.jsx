@@ -7,6 +7,9 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import '../styles/home.css';
+import Banner from '../components/Home/Banner';
+import Features from '../components/Home/Features';
+import TopWorker from '../components/Home/TopWorker';
 
 const Home = () => {
   const [workers, setWorkers] = useState([]);
@@ -62,30 +65,6 @@ const Home = () => {
     setLoading(false);
   }, []);
 
-  const banners = [
-    {
-      id: 1,
-      title: 'Earn Money by Completing Tasks',
-      subtitle: 'Complete simple tasks and earn instantly',
-      cta: 'Get Started as Worker',
-      gradient: 'from-blue-600 to-blue-800',
-    },
-    {
-      id: 2,
-      title: 'Hire Workers for Your Tasks',
-      subtitle: 'Post your tasks and get them done by our workers',
-      cta: 'Post a Task as Buyer',
-      gradient: 'from-purple-600 to-purple-800',
-    },
-    {
-      id: 3,
-      title: 'Trusted by Thousands',
-      subtitle: 'Join a community of content creators and workers',
-      cta: 'Join Our Community',
-      gradient: 'from-pink-600 to-pink-800',
-    },
-  ];
-
   const testimonials = [
     {
       name: 'Kamala Sharma',
@@ -121,98 +100,17 @@ const Home = () => {
     <div className="home">
       {/* Hero Section with Banner Slider */}
       <section className="hero-section">
-        <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
-          spaceBetween={0}
-          slidesPerView={1}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
-          navigation
-          className="banner-slider"
-        >
-          {banners.map((banner) => (
-            <SwiperSlide key={banner.id}>
-              <div className={`banner bg-gradient-to-r ${banner.gradient}`}>
-                <div className="banner-content">
-                  <h1 className="banner-title">{banner.title}</h1>
-                  <p className="banner-subtitle">{banner.subtitle}</p>
-                  <Link to="/register" className="banner-cta">
-                    {banner.cta}
-                    <ArrowRight size={20} />
-                  </Link>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            <Banner></Banner>
       </section>
 
       {/* Features Section */}
       <section className="features-section">
-        <div className="section-container">
-          <h2 className="section-title">Why Choose MicroTask?</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Briefcase size={32} />
-              </div>
-              <h3>Easy Tasks</h3>
-              <p>Simple and straightforward tasks that anyone can complete</p>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon">
-                <DollarSign size={32} />
-              </div>
-              <h3>Fast Payments</h3>
-              <p>Get paid instantly for completed and approved tasks</p>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Users size={32} />
-              </div>
-              <h3>Trusted Community</h3>
-              <p>Join thousands of workers and buyers on our platform</p>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon">
-                <TrendingUp size={32} />
-              </div>
-              <h3>Grow Your Income</h3>
-              <p>Earn more as you complete more tasks and build reputation</p>
-            </div>
-          </div>
-        </div>
+        <Features></Features>
       </section>
 
       {/* Top Workers Section */}
       <section className="workers-section">
-        <div className="section-container">
-          <h2 className="section-title">🌟 Top Earners</h2>
-          <p className="section-subtitle">Meet our most successful workers</p>
-          {loading ? (
-            <div className="loading">Loading top workers...</div>
-          ) : (
-            <div className="workers-grid">
-              {workers.map((worker, index) => (
-                <div key={worker._id} className="worker-card">
-                  <div className="worker-rank">#{index + 1}</div>
-                  <img
-                    src={worker.photoURL}
-                    alt={worker.name}
-                    className="worker-avatar"
-                  />
-                  <h3 className="worker-name">{worker.name}</h3>
-                  <p className="worker-coins">
-                    <span>🪙</span> {worker.coins.toLocaleString()} coins
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <TopWorker></TopWorker>
       </section>
 
       {/* Testimonials Section */}
@@ -284,22 +182,6 @@ const Home = () => {
               <h3>Get Paid</h3>
               <p>Receive instant payments for approved work</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="cta-content">
-          <h2>Ready to Start Earning?</h2>
-          <p>Join thousands of workers making money on MicroTask Platform</p>
-          <div className="cta-buttons">
-            <Link to="/register?role=worker" className="cta-btn primary">
-              Become a Worker
-            </Link>
-            <Link to="/register?role=buyer" className="cta-btn secondary">
-              Become a Buyer
-            </Link>
           </div>
         </div>
       </section>

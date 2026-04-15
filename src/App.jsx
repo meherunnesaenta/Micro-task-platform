@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/shared/Navbar';
 import Footer from './components/shared/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -25,8 +25,27 @@ import BuyerHome from './pages/dashboard/buyer/BuyerHome';
 
 // Admin Pages
 import AdminHome from './pages/dashboard/admin/AdminHome';
+import ManageUsers from './pages/dashboard/admin/ManageUsers';
+import ManageTasks from './pages/dashboard/admin/ManageTasks';
+import ManageWithdrawals from './pages/dashboard/admin/ManageWithdrawals';
+import Reports from './pages/dashboard/admin/Reports';
 
 import './App.css'
+
+// Component to handle role-based dashboard redirect
+const DashboardRedirect = () => {
+  const { user } = useAuth();
+  
+  if (user?.role === 'admin') {
+    return <Navigate to="/dashboard/admin/home" />;
+  } else if (user?.role === 'buyer') {
+    return <Navigate to="/dashboard/buyer/home" />;
+  } else if (user?.role === 'worker') {
+    return <Navigate to="/dashboard/worker/home" />;
+  }
+  
+  return <Navigate to="/" />;
+};
 
 function App() {
   // Worker sidebar items
@@ -114,10 +133,10 @@ function App() {
                   <DashboardLayout sidebarItems={adminSidebarItems}>
                     <Routes>
                       <Route path="/home" element={<AdminHome />} />
-                      <Route path="/users" element={<div>Manage Users Page</div>} />
-                      <Route path="/tasks" element={<div>Manage Tasks Page</div>} />
-                      <Route path="/withdrawals" element={<div>Manage Withdrawals Page</div>} />
-                      <Route path="/reports" element={<div>Reports Page</div>} />
+                      <Route path="/users" element={<ManageUsers />} />
+                      <Route path="/tasks" element={<ManageTasks />} />
+                      <Route path="/withdrawals" element={<ManageWithdrawals />} />
+                      <Route path="/reports" element={<Reports />} />
                       <Route path="/" element={<Navigate to="home" />} />
                     </Routes>
                   </DashboardLayout>
@@ -130,7 +149,7 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Navigate to="/dashboard/worker/home" />
+                  <DashboardRedirect />
                 </ProtectedRoute>
               }
             />
