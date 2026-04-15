@@ -1,0 +1,257 @@
+/* Admin Dashboard Styles */
+
+.admin-home {
+  padding: 1.5rem 0;
+}
+
+.page-title {
+  margin-bottom: 2rem;
+}
+
+.page-title h1 {
+  font-size: 2.2rem;
+  color: #1a1a2e;
+  margin-bottom: 0.5rem;
+}
+
+.page-title p {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+.stats-grid.admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-icon.purple {
+  background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%);
+}
+
+.stat-icon.blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.stat-icon.orange {
+  background: linear-gradient(135deg, #f97316 0%, #d97706 100%);
+}
+
+.stat-icon.green {
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+}
+
+.stat-label {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  margin: 0.5rem 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.stat-change {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #bdc3c7;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+/* Management Section */
+.management-section {
+  margin-bottom: 3rem;
+}
+
+.management-section h2 {
+  color: #1a1a2e;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.management-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.management-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  border: 2px solid transparent;
+}
+
+.management-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.management-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1a1a2e;
+}
+
+.management-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+/* Recent Activity */
+.recent-activity {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.recent-activity h2 {
+  color: #1a1a2e;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  padding: 1rem;
+  background: #f5f6fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.activity-item:hover {
+  background: #eef0f7;
+  transform: translateX(4px);
+}
+
+.activity-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.activity-badge.new {
+  background: #d1f2eb;
+  color: #047857;
+}
+
+.activity-badge.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.activity-badge.completed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.activity-item p {
+  margin: 0;
+  flex: 1;
+  color: #555;
+  font-weight: 500;
+}
+
+.activity-item time {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-title h1 {
+    font-size: 1.8rem;
+  }
+
+  .management-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid.admin {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .management-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .activity-item time {
+    white-space: normal;
+  }
+}
