@@ -82,6 +82,26 @@ const WorkerHome = () => {
         </div>
       </div>
 
+      {/* Profile Card */}
+      <div className="profile-card-section">
+        <div className="profile-card-home">
+          <div className="profile-header">
+            <img 
+              src={user?.photoURL || 'https://via.placeholder.com/60'} 
+              alt="Profile" 
+              className="profile-avatar"
+            />
+            <div className="profile-info">
+              <h3>{user?.name}</h3>
+              <p>Worker</p>
+            </div>
+          </div>
+          <Link to="/dashboard/worker/profile" className="btn btn-primary btn-sm">
+            Edit Profile
+          </Link>
+        </div>
+      </div>
+
       <div className="info-section">
         <h3>Quick Stats</h3>
         <div className="info-grid">

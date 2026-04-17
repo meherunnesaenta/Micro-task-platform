@@ -1062,3 +1062,64 @@
     font-size: 0.85rem;
   }
 }
+
+/* Profile Card Section */
+.profile-card-section {
+  margin: 3rem 0;
+}
+
+.profile-card-home {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #667eea;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-info h3 {
+  margin: 0;
+  color: #1a1a2e;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.profile-info p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .profile-card-home {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .profile-header {
+    justify-content: center;
+  }
+}

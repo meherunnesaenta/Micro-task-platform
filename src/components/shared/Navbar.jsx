@@ -15,6 +15,7 @@ import {
   Menu
 } from 'lucide-react';
 import Logo from './Logo';
+import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -27,12 +28,21 @@ const Navbar = () => {
   const userDropdownRef = useRef(null);
   const notificationRef = useRef(null);
 
-  // Theme initialization
+// Theme + coins refresh
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const isDark = savedTheme === 'dark';
     setIsDarkMode(isDark);
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  }, []);
+
+  useEffect(() => {
+    const handleCoinsUpdate = () => {
+      // Trigger user refresh
+      window.location.reload();
+    };
+    window.addEventListener('userCoinsUpdated', handleCoinsUpdate);
+    return () => window.removeEventListener('userCoinsUpdated', handleCoinsUpdate);
   }, []);
 
   // Close dropdowns when clicking outside
@@ -120,30 +130,11 @@ const Navbar = () => {
                 </button>
 
                 {/* Notifications */}
-                {isAuthenticated && (
-                  <div className="relative" ref={notificationRef}>
-                    <button
-                      onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                      className="p-2 rounded-lg hover:bg-base-200 transition-colors relative"
-                    >
-                      <Bell size={18} />
-                      <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-error rounded-full"></span>
-                    </button>
-
-                    {isNotificationsOpen && (
-                      <div className="absolute right-0 mt-2 w-80 bg-base-100 rounded-lg shadow-lg border border-base-200 overflow-hidden">
-                        <div className="p-3 border-b border-base-200">
-                          <h3 className="font-semibold">Notifications</h3>
-                        </div>
-                        <div className="max-h-80 overflow-y-auto">
-                          <div className="p-4 text-center text-base-content/50 text-sm">
-                            No new notifications
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+<NotificationBell />
+  <div className="coins-refresh">
+    <Coins size={16} className="text-primary" />
+    <span>{user?.coins || 0}</span>
+  </div>
 
                 {/* GitHub Button */}
                 <button

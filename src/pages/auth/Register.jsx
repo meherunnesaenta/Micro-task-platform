@@ -65,10 +65,11 @@ const Register = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
             {/* Name Field */}
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name-field">Full Name</label>
               <div className="input-wrapper">
                 <User className="input-icon" />
                 <input
+                  id="name-field"
                   {...register('name', {
                     required: 'Name is required',
                     minLength: {
@@ -91,10 +92,11 @@ const Register = () => {
 
             {/* Email Field */}
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email-field">Email Address</label>
               <div className="input-wrapper">
                 <Mail className="input-icon" />
                 <input
+                  id="email-field"
                   {...register('email', {
                     required: 'Email is required',
                     pattern: {
@@ -121,6 +123,7 @@ const Register = () => {
               <div className="role-selector">
                 <label className="radio-label">
                   <input
+                    id="role-worker"
                     {...register('role')}
                     type="radio"
                     value="worker"
@@ -131,7 +134,12 @@ const Register = () => {
                   </span>
                 </label>
                 <label className="radio-label">
-                  <input {...register('role')} type="radio" value="buyer" />
+                  <input 
+                    id="role-buyer"
+                    {...register('role')} 
+                    type="radio" 
+                    value="buyer" 
+                  />
                   <span className="radio-text">
                     <Briefcase size={16} /> Post tasks and hire workers
                   </span>
@@ -141,10 +149,11 @@ const Register = () => {
 
             {/* Password Field */}
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password-field">Password</label>
               <div className="input-wrapper">
                 <Lock className="input-icon" />
                 <input
+                  id="password-field"
                   {...register('password', {
                     required: 'Password is required',
                     minLength: {
@@ -172,10 +181,11 @@ const Register = () => {
 
             {/* Confirm Password Field */}
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+              <label htmlFor="confirmPassword-field">Confirm Password</label>
               <div className="input-wrapper">
                 <Lock className="input-icon" />
                 <input
+                  id="confirmPassword-field"
                   {...register('confirmPassword', {
                     required: 'Confirm password is required',
                     validate: (value) =>
@@ -196,10 +206,11 @@ const Register = () => {
 
             {/* Photo URL Field */}
             <div className="form-group">
-              <label htmlFor="photoURL">Profile Photo URL (Optional)</label>
+              <label htmlFor="photoURL-field">Profile Photo URL (Optional)</label>
               <div className="input-wrapper">
                 <User className="input-icon" />
                 <input
+                  id="photoURL-field"
                   {...register('photoURL')}
                   type="url"
                   placeholder="https://example.com/photo.jpg"
@@ -253,3 +264,4 @@ const Register = () => {
 };
 
 export default Register;
+

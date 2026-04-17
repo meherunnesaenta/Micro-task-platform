@@ -3,10 +3,10 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
-  background: rgba(var(--bg-rgb), 0.95);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .navbar-container {
@@ -35,34 +35,36 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text);
+  color: #667f8c;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.9rem;
   padding: 0.5rem 0.75rem;
-  border-radius: var(--radius);
-  transition: var(--transition);
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 .nav-link:hover {
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.08);
 }
 
 .nav-link-primary {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  background-color: #667eea;
   color: white;
   padding: 0.5rem 1.25rem;
-  border-radius: var(--radius);
+  border-radius: 6px;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: var(--transition);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
 .nav-link-primary:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  background-color: #5a6dd8;
 }
 
 /* Coins Badge */
@@ -70,9 +72,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  background-color: #f59e0b;
   padding: 0.4rem 1rem;
-  border-radius: 2rem;
+  border-radius: 20px;
   color: white;
   font-weight: 600;
 }
@@ -95,42 +97,42 @@
 }
 
 .theme-toggle {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: rgba(102, 126, 234, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 6px;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text);
-  transition: var(--transition);
+  color: #667f8c;
+  transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-  color: var(--accent);
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.3);
+  color: #667eea;
 }
 
 .github-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: rgba(102, 126, 234, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 6px;
   padding: 0.5rem 1rem;
   cursor: pointer;
-  color: var(--text);
+  color: #667f8c;
   font-weight: 500;
   font-size: 0.85rem;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .github-btn:hover {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: #667eea;
+  border-color: #667eea;
   color: white;
 }
 
@@ -143,17 +145,17 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 2rem;
+  background: rgba(102, 126, 234, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 20px;
   padding: 0.3rem 0.75rem 0.3rem 0.3rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .user-trigger:hover {
-  border-color: var(--accent);
-  background: var(--accent-bg);
+  border-color: rgba(102, 126, 234, 0.3);
+  background: rgba(102, 126, 234, 0.12);
 }
 
 .user-avatar {
@@ -161,6 +163,7 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .user-info {
@@ -170,19 +173,19 @@
 .user-name {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-h);
+  color: #1a1a2e;
   display: block;
 }
 
 .user-role {
   font-size: 0.7rem;
-  color: var(--accent);
+  color: #667eea;
   text-transform: capitalize;
 }
 
 .dropdown-arrow {
   transition: transform 0.2s ease;
-  color: var(--text-light);
+  color: #667f8c;
 }
 
 .dropdown-arrow.rotated {
@@ -195,10 +198,10 @@
   top: calc(100% + 0.5rem);
   right: 0;
   width: 280px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   animation: slideDown 0.2s ease;
 }
@@ -216,6 +219,7 @@
 
 .dropdown-header {
   padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .dropdown-user-info {
@@ -229,21 +233,22 @@
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .dropdown-user-name {
   font-weight: 600;
-  color: var(--text-h);
+  color: #1a1a2e;
 }
 
 .dropdown-user-email {
   font-size: 0.75rem;
-  color: var(--text-light);
+  color: #667f8c;
 }
 
 .dropdown-divider {
   height: 1px;
-  background: var(--border);
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .dropdown-item {
@@ -254,24 +259,24 @@
   padding: 0.75rem 1rem;
   background: none;
   border: none;
-  color: var(--text);
+  color: #667f8c;
   text-decoration: none;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
   font-size: 0.9rem;
 }
 
 .dropdown-item:hover {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: rgba(102, 126, 234, 0.08);
+  color: #667eea;
 }
 
 .dropdown-item.logout {
-  color: var(--error);
+  color: #ef4444;
 }
 
 .dropdown-item.logout:hover {
-  background: var(--error-bg);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 /* Mobile Menu Button */

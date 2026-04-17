@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth from localStorage
+  // Initialize auth from localStorage + validate token
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
+      // Validate token
+      refreshUser();
     }
     setLoading(false);
   }, []);
@@ -48,6 +50,20 @@ export const AuthProvider = ({ children }) => {
     return response;
   };
 
+  // Google login
+  const googleLogin = async (googleToken) => {
+    const response = await authAPI.googleLogin(googleToken);
+    const { token: newToken, user: newUser } = response;
+
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('user', JSON.stringify(newUser));
+
+    setToken(newToken);
+    setUser(newUser);
+
+    return response;
+  };
+
   // Logout user
   const logout = () => {
     localStorage.removeItem('token');
@@ -55,6 +71,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
   };
+
 
   // Update user profile
   const updateProfile = async (data) => {
@@ -64,6 +81,23 @@ export const AuthProvider = ({ children }) => {
     setUser(updatedUser);
     return response;
   };
+
+// Refresh current user from server
+  const refreshUser = async () => {
+    try {
+      const response = await authAPI.getProfile();
+      localStorage.setItem('user', JSON.stringify(response));
+      setUser(response);
+      return response;
+    } catch (error) {
+      console.error('Refresh user failed:', error);
+      // Don't logout on refresh fail - keep local data
+      localStorage.removeItem('token');
+      setToken(null);
+      return null;
+    }
+  };
+
 
   // Check if user is authenticated
   const isAuthenticated = !!token && !!user;
@@ -80,6 +114,7 @@ export const AuthProvider = ({ children }) => {
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
 
+
   const value = {
     user,
     token,
@@ -91,9 +126,12 @@ export const AuthProvider = ({ children }) => {
     isAdmin,
     register,
     login,
+    googleLogin,
     logout,
     updateProfile,
+    refreshUser,
   };
+
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

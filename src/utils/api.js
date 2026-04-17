@@ -5,9 +5,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Request interceptor to add token
@@ -16,6 +13,13 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // For FormData, don't set Content-Type - let axios handle it automatically
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    } else if (!config.headers['Content-Type']) {
+      // For JSON, set Content-Type if not already set
+      config.headers['Content-Type'] = 'application/json';
     }
     return config;
   },

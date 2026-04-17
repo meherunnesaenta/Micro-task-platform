@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { submissionAPI } from '../../../utils/endpoints';
+import { useAuth } from '../../../context/AuthContext';
 import { Clock, CheckCircle, XCircle, Loader } from 'lucide-react';
 import '../../../styles/submissions.css';
 
-const WorkerSubmissions = () => {
+  const WorkerSubmissions = () => {
+  const { refreshUser } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -16,6 +18,8 @@ const WorkerSubmissions = () => {
         const response = await submissionAPI.getMySubmissions(page, 10);
         setSubmissions(response.submissions || []);
         setTotal(response.total || 0);
+        // Refresh user on load to get latest coins
+        refreshUser();
       } catch (error) {
         console.error('Error fetching submissions:', error);
       } finally {

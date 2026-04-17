@@ -10,6 +10,7 @@ import '../styles/home.css';
 import Banner from '../components/Home/Banner';
 import Features from '../components/Home/Features';
 import TopWorker from '../components/Home/TopWorker';
+import PostedTasks from '../components/Home/PostedTasks';
 
 const Home = () => {
   const [workers, setWorkers] = useState([]);
@@ -109,9 +110,12 @@ const Home = () => {
       </section>
 
       {/* Top Workers Section */}
-      <section className="workers-section">
+      {/* <section className="workers-section">
         <TopWorker></TopWorker>
-      </section>
+      </section> */}
+
+      {/* Posted Tasks Section */}
+      <PostedTasks />
 
       {/* Testimonials Section */}
       <section className="testimonials-section">

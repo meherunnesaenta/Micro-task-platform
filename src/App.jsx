@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -15,6 +16,7 @@ import Register from './pages/auth/Register';
 
 // Worker Pages
 import WorkerHome from './pages/dashboard/worker/WorkerHome';
+import WorkerProfile from './pages/dashboard/worker/WorkerProfile';
 import WorkerTaskList from './pages/dashboard/worker/WorkerTaskList';
 import WorkerTaskDetails from './pages/dashboard/worker/WorkerTaskDetails';
 import WorkerSubmissions from './pages/dashboard/worker/WorkerSubmissions';
@@ -22,13 +24,23 @@ import WorkerWithdrawals from './pages/dashboard/worker/WorkerWithdrawals';
 
 // Buyer Pages
 import BuyerHome from './pages/dashboard/buyer/BuyerHome';
+import BuyerAddTask from './pages/dashboard/buyer/BuyerAddTask';
+import BuyerMyTasks from './pages/dashboard/buyer/BuyerMyTasks';
+import BuyerReviewSubmissions from './pages/dashboard/buyer/BuyerReviewSubmissions';
+import BuyerPurchaseCoin from './pages/dashboard/buyer/BuyerPurchaseCoin';
+import BuyerPaymentHistory from './pages/dashboard/buyer/BuyerPaymentHistory';
+import BuyerProfile from './pages/dashboard/buyer/BuyerProfile';
 
 // Admin Pages
 import AdminHome from './pages/dashboard/admin/AdminHome';
+import AdminProfile from './pages/dashboard/admin/AdminProfile';
 import ManageUsers from './pages/dashboard/admin/ManageUsers';
 import ManageTasks from './pages/dashboard/admin/ManageTasks';
 import ManageWithdrawals from './pages/dashboard/admin/ManageWithdrawals';
 import Reports from './pages/dashboard/admin/Reports';
+
+// 404 Page
+import NotFound from './pages/NotFound';
 
 import './App.css'
 
@@ -47,6 +59,16 @@ const DashboardRedirect = () => {
   return <Navigate to="/" />;
 };
 
+// Component to conditionally render Navbar
+const ConditionalNavbar = () => {
+  const location = useLocation();
+  // Hide navbar on dashboard routes
+  if (location.pathname.startsWith('/dashboard')) {
+    return null;
+  }
+  return <Navbar />;
+};
+
 function App() {
   // Worker sidebar items
   const workerSidebarItems = [
@@ -54,6 +76,7 @@ function App() {
     { path: '/dashboard/worker/tasks', label: 'Available Tasks', icon: '📋' },
     { path: '/dashboard/worker/submissions', label: 'My Submissions', icon: '✅' },
     { path: '/dashboard/worker/withdrawals', label: 'Withdrawals', icon: '💰' },
+    { path: '/dashboard/worker/profile', label: 'Profile Settings', icon: '👤' },
   ];
 
   // Buyer sidebar items
@@ -64,6 +87,7 @@ function App() {
     { path: '/dashboard/buyer/review', label: 'Review Submissions', icon: '👀' },
     { path: '/dashboard/buyer/purchase-coin', label: 'Purchase Coin', icon: '🪙' },
     { path: '/dashboard/buyer/payment-history', label: 'Payment History', icon: '📊' },
+    { path: '/dashboard/buyer/profile', label: 'Profile Settings', icon: '👤' },
   ];
 
   // Admin sidebar items
@@ -73,13 +97,15 @@ function App() {
     { path: '/dashboard/admin/tasks', label: 'Manage Tasks', icon: '📋' },
     { path: '/dashboard/admin/withdrawals', label: 'Withdrawals', icon: '💰' },
     { path: '/dashboard/admin/reports', label: 'Reports', icon: '⚠️' },
+    { path: '/dashboard/admin/profile', label: 'Profile Settings', icon: '👤' },
   ];
 
   return (
-    <Router>
-      <AuthProvider>
-        <div className="app">
-          <Navbar />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <Router>
+        <AuthProvider>
+          <div className="app">
+          <ConditionalNavbar />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
@@ -94,6 +120,7 @@ function App() {
                   <DashboardLayout sidebarItems={workerSidebarItems}>
                     <Routes>
                       <Route path="/home" element={<WorkerHome />} />
+                      <Route path="/profile" element={<WorkerProfile />} />
                       <Route path="/tasks" element={<WorkerTaskList />} />
                       <Route path="/tasks/:taskId" element={<WorkerTaskDetails />} />
                       <Route path="/submissions" element={<WorkerSubmissions />} />
@@ -113,11 +140,12 @@ function App() {
                   <DashboardLayout sidebarItems={buyerSidebarItems}>
                     <Routes>
                       <Route path="/home" element={<BuyerHome />} />
-                      <Route path="/add-task" element={<div>Add Task Page</div>} />
-                      <Route path="/my-tasks" element={<div>My Tasks Page</div>} />
-                      <Route path="/review" element={<div>Review Submissions Page</div>} />
-                      <Route path="/purchase-coin" element={<div>Purchase Coin Page</div>} />
-                      <Route path="/payment-history" element={<div>Payment History Page</div>} />
+                      <Route path="/add-task" element={<BuyerAddTask />} />
+                      <Route path="/my-tasks" element={<BuyerMyTasks />} />
+                      <Route path="/review" element={<BuyerReviewSubmissions />} />
+                      <Route path="/purchase-coin" element={<BuyerPurchaseCoin />} />
+                      <Route path="/payment-history" element={<BuyerPaymentHistory />} />
+                      <Route path="/profile" element={<BuyerProfile />} />
                       <Route path="/" element={<Navigate to="home" />} />
                     </Routes>
                   </DashboardLayout>
@@ -133,6 +161,7 @@ function App() {
                   <DashboardLayout sidebarItems={adminSidebarItems}>
                     <Routes>
                       <Route path="/home" element={<AdminHome />} />
+                      <Route path="/profile" element={<AdminProfile />} />
                       <Route path="/users" element={<ManageUsers />} />
                       <Route path="/tasks" element={<ManageTasks />} />
                       <Route path="/withdrawals" element={<ManageWithdrawals />} />
@@ -154,14 +183,15 @@ function App() {
               }
             />
 
-            {/* Catch all - redirect to home */}
-            <Route path="*" element={<Navigate to="/" />} />
+            {/* Catch all - 404 page */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer />
           <ToastContainer position="bottom-right" />
         </div>
       </AuthProvider>
     </Router>
+    </GoogleOAuthProvider>
   );
 }
 

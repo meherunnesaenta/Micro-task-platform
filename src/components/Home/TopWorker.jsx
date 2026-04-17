@@ -1,25 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Crown, Medal, Trophy, Coins, User, TrendingUp, Star } from 'lucide-react';
+import React from 'react';
+import { Crown, Medal, Trophy, Coins, TrendingUp, Star } from 'lucide-react';
 
 const TopWorker = () => {
-  const [workers, setWorkers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Mock data - replace with your actual API call
-    setTimeout(() => {
-      const mockWorkers = [
-        { _id: 1, name: "Sarah Johnson", photoURL: "https://randomuser.me/api/portraits/women/1.jpg", coins: 12500 },
-        { _id: 2, name: "Michael Chen", photoURL: "https://randomuser.me/api/portraits/men/2.jpg", coins: 10800 },
-        { _id: 3, name: "Emily Davis", photoURL: "https://randomuser.me/api/portraits/women/3.jpg", coins: 9500 },
-        { _id: 4, name: "David Wilson", photoURL: "https://randomuser.me/api/portraits/men/4.jpg", coins: 8700 },
-        { _id: 5, name: "Lisa Brown", photoURL: "https://randomuser.me/api/portraits/women/5.jpg", coins: 7600 },
-        { _id: 6, name: "James Taylor", photoURL: "https://randomuser.me/api/portraits/men/6.jpg", coins: 6800 },
-      ];
-      setWorkers(mockWorkers);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const workers = [
+    { _id: 1, name: "Sarah Johnson", photoURL: "https://randomuser.me/api/portraits/women/1.jpg", coins: 12500 },
+    { _id: 2, name: "Michael Chen", photoURL: "https://randomuser.me/api/portraits/men/2.jpg", coins: 10800 },
+    { _id: 3, name: "Emily Davis", photoURL: "https://randomuser.me/api/portraits/women/3.jpg", coins: 9500 },
+    { _id: 4, name: "David Wilson", photoURL: "https://randomuser.me/api/portraits/men/4.jpg", coins: 8700 },
+    { _id: 5, name: "Lisa Brown", photoURL: "https://randomuser.me/api/portraits/women/5.jpg", coins: 7600 },
+    { _id: 6, name: "James Taylor", photoURL: "https://randomuser.me/api/portraits/men/6.jpg", coins: 6800 },
+  ];
 
   const getRankIcon = (index) => {
     switch(index) {
@@ -40,7 +30,6 @@ const TopWorker = () => {
   return (
     <section className="py-16 bg-base-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-4">
@@ -59,83 +48,75 @@ const TopWorker = () => {
         </div>
 
         {/* Workers Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="loading-spinner w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workers.map((worker, index) => (
-              <div 
-                key={worker._id} 
-                className="group bg-base-200 rounded-xl p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-              >
-                {/* Rank Badge */}
-                <div className="flex justify-between items-start mb-3">
-                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getRankBadge(index)}`}>
-                    {getRankIcon(index)}
-                    <span>#{index + 1}</span>
-                  </div>
-                  {index === 0 && (
-                    <div className="text-yellow-500 animate-pulse">
-                      <Star size={16} fill="currentColor" />
-                    </div>
-                  )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {workers.map((worker, index) => (
+            <div 
+              key={worker._id} 
+              className="group bg-base-200 rounded-xl p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              {/* Rank Badge */}
+              <div className="flex justify-between items-start mb-3">
+                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getRankBadge(index)}`}>
+                  {getRankIcon(index)}
+                  <span>#{index + 1}</span>
                 </div>
-
-                {/* Avatar */}
-                <div className="relative inline-block">
-                  <div className="w-24 h-24 mx-auto rounded-full overflow-hidden ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all">
-                    <img
-                      src={worker.photoURL}
-                      alt={worker.name}
-                      className="w-full h-full object-cover"
-                    />
+                {index === 0 && (
+                  <div className="text-yellow-500 animate-pulse">
+                    <Star size={16} fill="currentColor" />
                   </div>
-                  {/* Online indicator */}
-                  <div className="absolute bottom-1 right-2 w-3.5 h-3.5 bg-success rounded-full ring-2 ring-base-200"></div>
+                )}
+              </div>
+
+              {/* Avatar */}
+              <div className="relative inline-block">
+                <div className="w-24 h-24 mx-auto rounded-full overflow-hidden ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all">
+                  <img
+                    src={worker.photoURL}
+                    alt={worker.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                {/* Online indicator */}
+                <div className="absolute bottom-1 right-2 w-3.5 h-3.5 bg-success rounded-full ring-2 ring-base-200"></div>
+              </div>
 
-                {/* Name */}
-                <h3 className="text-lg font-semibold text-base-content mt-4 mb-2">
-                  {worker.name}
-                </h3>
+              {/* Name */}
+              <h3 className="text-lg font-semibold text-base-content mt-4 mb-2">
+                {worker.name}
+              </h3>
 
-                {/* Coins */}
-                <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-                  <Coins size={16} className="text-primary" />
-                  <span className="text-primary font-bold">{worker.coins.toLocaleString()}</span>
-                  <span className="text-xs text-base-content/50">coins</span>
-                </div>
+              {/* Coins */}
+              <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
+                <Coins size={16} className="text-primary" />
+                <span className="text-primary font-bold">{worker.coins.toLocaleString()}</span>
+                <span className="text-xs text-base-content/50">coins</span>
+              </div>
 
-                {/* Stats */}
-                <div className="flex justify-center gap-4 mt-4 pt-3 border-t border-base-300">
-                  <div className="text-center">
-                    <div className="text-xs text-base-content/50">Tasks Done</div>
-                    <div className="text-sm font-semibold text-base-content">
-                      {Math.floor(worker.coins / 15)}+
-                    </div>
+              {/* Stats */}
+              <div className="flex justify-center gap-4 mt-4 pt-3 border-t border-base-300">
+                <div className="text-center">
+                  <div className="text-xs text-base-content/50">Tasks Done</div>
+                  <div className="text-sm font-semibold text-base-content">
+                    {Math.floor(worker.coins / 15)}+
                   </div>
-                  <div className="text-center">
-                    <div className="text-xs text-base-content/50">Earnings</div>
-                    <div className="text-sm font-semibold text-success">
-                      ${Math.floor(worker.coins / 20)}
-                    </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-base-content/50">Earnings</div>
+                  <div className="text-sm font-semibold text-success">
+                    ${Math.floor(worker.coins / 20)}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
 
         {/* View All Button */}
-        {!loading && workers.length > 0 && (
-          <div className="text-center mt-10">
-            <button className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all text-sm font-medium">
-              View All Workers <TrendingUp size={14} />
-            </button>
-          </div>
-        )}
+        <div className="text-center mt-10">
+          <button className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all text-sm font-medium">
+            View All Workers <TrendingUp size={14} />
+          </button>
+        </div>
       </div>
 
       <style jsx>{`
@@ -151,3 +132,4 @@ const TopWorker = () => {
 };
 
 export default TopWorker;
+

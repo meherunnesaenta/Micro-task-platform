@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 import { adminAPI } from '../../../utils/endpoints' ;
 import { Users, Briefcase, DollarSign, TrendingUp } from 'lucide-react';
 import '../../../styles/admin-dashboard.css';
 import { Link } from 'react-router-dom';
 
 const AdminHome = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalWorkers: 0,
     totalBuyers: 0,
@@ -83,6 +85,26 @@ const AdminHome = () => {
             <h3 className="stat-value">${stats.totalPayment}</h3>
             <p className="stat-change">Total payment</p>
           </div>
+        </div>
+      </div>
+
+      {/* Profile Card */}
+      <div className="profile-card-section">
+        <div className="profile-card-home">
+          <div className="profile-header">
+            <img 
+              src={user?.photoURL || 'https://via.placeholder.com/60'} 
+              alt="Profile" 
+              className="profile-avatar"
+            />
+            <div className="profile-info">
+              <h3>{user?.name}</h3>
+              <p>Administrator</p>
+            </div>
+          </div>
+          <Link to="/dashboard/admin/profile" className="btn btn-primary btn-sm">
+            Edit Profile
+          </Link>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import '../../../styles/withdrawals.css';
 
 const WorkerWithdrawals = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm();
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +51,7 @@ const WorkerWithdrawals = () => {
 
       await withdrawalAPI.createWithdrawal(withdrawalData);
       toast.success('Withdrawal request submitted successfully!');
+      await refreshUser();
       // Reset form and refresh list
     } catch (error) {
       toast.error(error.message || 'Withdrawal request failed');
