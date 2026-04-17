@@ -21,7 +21,7 @@ const BuyerPaymentHistory = () => {
   const fetchPaymentHistory = async () => {
     try {
       setLoading(true);
-      const response = await paymentAPI.getPaymentHistory(pagination.currentPage, 10);
+const response = await paymentAPI.getHistory(pagination.currentPage, 10);
       setPayments(response.payments || []);
       setPagination({
         currentPage: response.currentPage || 1,

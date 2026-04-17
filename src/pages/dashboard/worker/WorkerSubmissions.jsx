@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { submissionAPI } from '../../../utils/endpoints';
 import { useAuth } from '../../../context/AuthContext';
 import { Clock, CheckCircle, XCircle, Loader } from 'lucide-react';
 import '../../../styles/submissions.css';
 
-  const WorkerSubmissions = () => {
+const WorkerSubmissions = () => {
   const { refreshUser } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchSubmissions = async () => {
       try {
         setLoading(true);
         const response = await submissionAPI.getMySubmissions(page, 10);
         setSubmissions(response.submissions || []);
         setTotal(response.total || 0);
-        // Refresh user on load to get latest coins
-        refreshUser();
       } catch (error) {
         console.error('Error fetching submissions:', error);
       } finally {
@@ -104,7 +103,9 @@ import '../../../styles/submissions.css';
                       </span>
                     </td>
                     <td>
-                      <button className="details-btn">View</button>
+                      <Link to={`/dashboard/worker/submissions/${submission._id}`}>
+                        <button className="details-btn">View</button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -144,3 +145,4 @@ import '../../../styles/submissions.css';
 };
 
 export default WorkerSubmissions;
+

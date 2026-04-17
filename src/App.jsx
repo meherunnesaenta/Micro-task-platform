@@ -20,6 +20,7 @@ import WorkerProfile from './pages/dashboard/worker/WorkerProfile';
 import WorkerTaskList from './pages/dashboard/worker/WorkerTaskList';
 import WorkerTaskDetails from './pages/dashboard/worker/WorkerTaskDetails';
 import WorkerSubmissions from './pages/dashboard/worker/WorkerSubmissions';
+import WorkerSubmissionDetails from './pages/dashboard/worker/WorkerSubmissionDetails';
 import WorkerWithdrawals from './pages/dashboard/worker/WorkerWithdrawals';
 
 // Buyer Pages
@@ -124,6 +125,7 @@ function App() {
                       <Route path="/tasks" element={<WorkerTaskList />} />
                       <Route path="/tasks/:taskId" element={<WorkerTaskDetails />} />
                       <Route path="/submissions" element={<WorkerSubmissions />} />
+                      <Route path="/submissions/:id" element={<WorkerSubmissionDetails />} />
                       <Route path="/withdrawals" element={<WorkerWithdrawals />} />
                       <Route path="/" element={<Navigate to="home" />} />
                     </Routes>
@@ -142,7 +144,7 @@ function App() {
                       <Route path="/home" element={<BuyerHome />} />
                       <Route path="/add-task" element={<BuyerAddTask />} />
                       <Route path="/my-tasks" element={<BuyerMyTasks />} />
-                      <Route path="/review" element={<BuyerReviewSubmissions />} />
+<Route path="/review" element={<BuyerReviewSubmissions />} />
                       <Route path="/purchase-coin" element={<BuyerPurchaseCoin />} />
                       <Route path="/payment-history" element={<BuyerPaymentHistory />} />
                       <Route path="/profile" element={<BuyerProfile />} />

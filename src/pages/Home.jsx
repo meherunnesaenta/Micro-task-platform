@@ -110,9 +110,9 @@ const Home = () => {
       </section>
 
       {/* Top Workers Section */}
-      {/* <section className="workers-section">
+      <section className="workers-section">
         <TopWorker></TopWorker>
-      </section> */}
+      </section>
 
       {/* Posted Tasks Section */}
       <PostedTasks />
