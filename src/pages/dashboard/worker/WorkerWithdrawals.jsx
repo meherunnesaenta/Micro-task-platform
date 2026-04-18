@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
 import { withdrawalAPI } from '../../../utils/endpoints';
-import { AlertCircle, CheckCircle, Clock, DollarSign } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, DollarSign, Coins, CreditCard, History, Info } from 'lucide-react';
 import { toast } from 'react-toastify';
-import '../../../styles/withdrawals.css';
 
 const WorkerWithdrawals = () => {
   const { user, refreshUser } = useAuth();
@@ -23,6 +22,7 @@ const WorkerWithdrawals = () => {
         setWithdrawals(response.withdrawals || []);
       } catch (error) {
         console.error('Error fetching withdrawals:', error);
+        toast.error('Failed to load withdrawal history');
       } finally {
         setLoading(false);
       }
@@ -32,7 +32,7 @@ const WorkerWithdrawals = () => {
   }, [page]);
 
   const onSubmit = async (data) => {
-    if (user.coins < parseInt(data.coins_to_withdraw)) {
+    if (user?.coins < parseInt(data.coins_to_withdraw)) {
       toast.error('Insufficient coins');
       return;
     }
@@ -52,119 +52,164 @@ const WorkerWithdrawals = () => {
       await withdrawalAPI.createWithdrawal(withdrawalData);
       toast.success('Withdrawal request submitted successfully!');
       await refreshUser();
-      // Reset form and refresh list
+      // Reset form
+      document.querySelector('form')?.reset();
+      // Refresh withdrawal list
+      const response = await withdrawalAPI.getMyWithdrawals(1, 10);
+      setWithdrawals(response.withdrawals || []);
     } catch (error) {
       toast.error(error.message || 'Withdrawal request failed');
     }
   };
 
+  const getStatusBadge = (status) => {
+    const config = {
+      pending: { icon: <Clock size={14} />, label: 'Pending', className: 'bg-yellow-500/20 text-yellow-600' },
+      approved: { icon: <CheckCircle size={14} />, label: 'Approved', className: 'bg-green-500/20 text-green-600' },
+      rejected: { icon: <AlertCircle size={14} />, label: 'Rejected', className: 'bg-red-500/20 text-red-600' },
+    };
+    const c = config[status?.toLowerCase()] || config.pending;
+    return <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${c.className}`}>{c.icon}{c.label}</span>;
+  };
+
+  const totalEarningUSD = Math.floor((user?.coins || 0) / 20);
+
   return (
-    <div className="withdrawals-page">
-      <div className="page-header">
-        <h1>Withdrawals</h1>
-        <p>Convert your coins to real money</p>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-3">
+          <DollarSign size={14} className="text-primary" />
+          <span className="text-primary font-semibold text-sm">Withdrawals</span>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold text-base-content">Withdrawals</h1>
+        <p className="text-base-content/60 mt-1">Convert your coins to real money</p>
       </div>
 
-      <div className="withdrawals-grid">
-        {/* Left: Withdrawal Form */}
-        <div className="withdrawal-form-card">
-          <h2>Make a Withdrawal Request</h2>
+      {/* Available Balance Card */}
+      <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-6 text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="text-white/80 text-sm mb-1">Available Balance</p>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <Coins size={24} />
+                <span className="text-3xl font-bold">{user?.coins?.toLocaleString() || 0}</span>
+                <span className="text-white/80">coins</span>
+              </div>
+              <span className="text-white/50">|</span>
+              <div className="flex items-center gap-1">
+                <DollarSign size={24} />
+                <span className="text-3xl font-bold">{totalEarningUSD}</span>
+                <span className="text-white/80">USD</span>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white/20 rounded-lg px-4 py-2 text-center">
+            <p className="text-xs text-white/80">Min. Withdrawal</p>
+            <p className="font-bold">200 coins ($10)</p>
+          </div>
+        </div>
+      </div>
 
-          {user.coins < 200 ? (
-            <div className="insufficient-banner">
-              <AlertCircle size={20} />
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left: Withdrawal Form */}
+        <div className="bg-base-200 rounded-2xl p-6">
+          <h2 className="text-xl font-bold text-base-content mb-5 flex items-center gap-2">
+            <CreditCard size={20} className="text-primary" />
+            Make a Withdrawal Request
+          </h2>
+
+          {user?.coins < 200 ? (
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-start gap-3">
+              <AlertCircle size={20} className="text-yellow-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p>Insufficient coins for withdrawal</p>
-                <small>Minimum: 200 coins ($10). You have: {user.coins} coins</small>
+                <p className="font-medium text-yellow-600">Insufficient coins for withdrawal</p>
+                <p className="text-sm text-yellow-600/70">Minimum: 200 coins ($10). You have: {user?.coins || 0} coins</p>
               </div>
             </div>
           ) : (
             <>
-              <form onSubmit={handleSubmit(onSubmit)} className="withdrawal-form">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {/* Coins to Withdraw */}
-                <div className="form-group">
-                  <label>Coins to Withdraw</label>
-                  <div className="input-with-info">
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Coins to Withdraw</label>
+                  <div className="relative">
+                    <Coins className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
                     <input
                       {...register('coins_to_withdraw', {
                         required: 'Please enter amount',
                         min: { value: 200, message: 'Minimum 200 coins' },
-                        max: {
-                          value: user.coins,
-                          message: `Maximum ${user.coins} coins`,
-                        },
+                        max: { value: user?.coins, message: `Maximum ${user?.coins} coins` },
                       })}
                       type="number"
                       placeholder="Enter coins amount"
-                      className="form-input"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none"
                     />
-                    <p className="info-text">Available: {user.coins} coins</p>
                   </div>
+                  <p className="text-xs text-base-content/40 mt-1">Available: {user?.coins} coins</p>
                   {errors.coins_to_withdraw && (
-                    <p className="error-text">
-                      {errors.coins_to_withdraw.message}
-                    </p>
+                    <p className="text-red-500 text-xs mt-1">{errors.coins_to_withdraw.message}</p>
                   )}
                 </div>
 
-                {/* Withdrawal Amount (Read-only) */}
-                <div className="form-group">
-                  <label>Withdrawal Amount (USD)</label>
-                  <div className="amount-display">
-                    <DollarSign size={20} />
-                    <span className="amount-value">{withdrawAmount}</span>
+                {/* Withdrawal Amount */}
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Withdrawal Amount (USD)</label>
+                  <div className="bg-primary/10 rounded-lg p-3 flex items-center gap-2">
+                    <DollarSign size={20} className="text-primary" />
+                    <span className="text-2xl font-bold text-primary">{withdrawAmount}</span>
+                    <span className="text-sm text-base-content/50 ml-auto">Conversion: 20 coins = $1</span>
                   </div>
-                  <p className="conversion-info">Conversion: 20 coins = $1</p>
                 </div>
 
                 {/* Payment System */}
-                <div className="form-group">
-                  <label>Payment System</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Payment System</label>
                   <select
-                    {...register('payment_system', {
-                      required: 'Please select payment system',
-                    })}
-                    className="form-select"
+                    {...register('payment_system', { required: 'Please select payment system' })}
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none"
                   >
                     <option value="">Select payment system</option>
                     <option value="stripe">Stripe</option>
                     <option value="paypal">PayPal</option>
                     <option value="bank_transfer">Bank Transfer</option>
+                    <option value="bkash">bKash</option>
+                    <option value="nagad">Nagad</option>
                   </select>
                   {errors.payment_system && (
-                    <p className="error-text">{errors.payment_system.message}</p>
+                    <p className="text-red-500 text-xs mt-1">{errors.payment_system.message}</p>
                   )}
                 </div>
 
                 {/* Account Number */}
-                <div className="form-group">
-                  <label>Account Number / Email</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Account Number / Email</label>
                   <input
-                    {...register('account_number', {
-                      required: 'Please enter account information',
-                    })}
+                    {...register('account_number', { required: 'Please enter account information' })}
                     type="text"
                     placeholder="Enter your account details"
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none"
                   />
                   {errors.account_number && (
-                    <p className="error-text">{errors.account_number.message}</p>
+                    <p className="text-red-500 text-xs mt-1">{errors.account_number.message}</p>
                   )}
                 </div>
 
                 <button
                   type="submit"
-                  disabled={isSubmitting || user.coins < 200}
-                  className="withdraw-btn"
+                  disabled={isSubmitting || user?.coins < 200}
+                  className="w-full py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? 'Processing...' : `Withdraw $${withdrawAmount}`}
                 </button>
               </form>
 
-              <div className="withdrawal-note">
-                <p>
-                  <strong>Note:</strong> Your withdrawal request will be processed
-                  within 24-48 hours. Admin approval is required.
+              <div className="mt-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                <p className="text-xs text-base-content/70 flex items-start gap-2">
+                  <Info size={14} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                  <span>Your withdrawal request will be processed within 24-48 hours. Admin approval is required.</span>
                 </p>
               </div>
             </>
@@ -172,52 +217,35 @@ const WorkerWithdrawals = () => {
         </div>
 
         {/* Right: Withdrawal History */}
-        <div className="withdrawal-history-card">
-          <h2>Withdrawal History</h2>
+        <div className="bg-base-200 rounded-2xl p-6">
+          <h2 className="text-xl font-bold text-base-content mb-5 flex items-center gap-2">
+            <History size={20} className="text-primary" />
+            Withdrawal History
+          </h2>
 
           {loading ? (
-            <p className="loading-text">Loading...</p>
+            <div className="flex justify-center py-8">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
           ) : withdrawals.length === 0 ? (
-            <p className="empty-text">No withdrawal requests yet</p>
+            <div className="text-center py-8">
+              <History size={48} className="mx-auto text-base-content/20 mb-3" />
+              <p className="text-base-content/50">No withdrawal requests yet</p>
+              <p className="text-xs text-base-content/30 mt-1">Your withdrawal history will appear here</p>
+            </div>
           ) : (
-            <div className="withdrawal-list">
+            <div className="space-y-3 max-h-[400px] overflow-y-auto">
               {withdrawals.map((withdrawal) => (
-                <div
-                  key={withdrawal._id}
-                  className={`withdrawal-item status-${withdrawal.status}`}
-                >
-                  <div className="withdrawal-header">
+                <div key={withdrawal._id} className="bg-base-100 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
                     <div>
-                      <p className="withdrawal-amount">
-                        ${withdrawal.withdrawal_amount}
-                      </p>
-                      <p className="withdrawal-date">
-                        {new Date(withdrawal.withdraw_date).toLocaleDateString()}
-                      </p>
+                      <p className="text-lg font-bold text-primary">${withdrawal.withdrawal_amount}</p>
+                      <p className="text-xs text-base-content/40">{new Date(withdrawal.withdraw_date).toLocaleDateString()}</p>
                     </div>
-                    <div className="withdrawal-status">
-                      {withdrawal.status === 'pending' && (
-                        <>
-                          <Clock size={16} />
-                          <span>Pending</span>
-                        </>
-                      )}
-                      {withdrawal.status === 'approved' && (
-                        <>
-                          <CheckCircle size={16} />
-                          <span>Approved</span>
-                        </>
-                      )}
-                      {withdrawal.status === 'rejected' && (
-                        <>
-                          <AlertCircle size={16} />
-                          <span>Rejected</span>
-                        </>
-                      )}
-                    </div>
+                    {getStatusBadge(withdrawal.status)}
                   </div>
-                  <p className="withdrawal-system">
-                    {withdrawal.payment_system}
+                  <p className="text-sm text-base-content/60 mt-2">
+                    <span className="font-medium">{withdrawal.payment_system}</span> • {withdrawal.withdrawal_coin} coins
                   </p>
                 </div>
               ))}
@@ -226,14 +254,30 @@ const WorkerWithdrawals = () => {
         </div>
       </div>
 
-      <div className="withdrawal-info">
-        <h3>Withdrawal Information</h3>
-        <ul>
-          <li>Minimum withdrawal: 200 coins ($10)</li>
-          <li>Maximum withdrawal: Your available balance</li>
-          <li>Conversion rate: 20 coins = $1</li>
-          <li>Processing time: 24-48 hours after admin approval</li>
-        </ul>
+      {/* Info Section */}
+      <div className="bg-base-200 rounded-2xl p-5">
+        <h3 className="font-bold text-base-content mb-3 flex items-center gap-2">
+          <Info size={18} className="text-primary" />
+          Withdrawal Information
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-base-content/70">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+            <span>Minimum withdrawal: 200 coins ($10)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+            <span>Maximum withdrawal: Your available balance</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+            <span>Conversion rate: 20 coins = $1</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+            <span>Processing time: 24-48 hours after admin approval</span>
+          </div>
+        </div>
       </div>
     </div>
   );

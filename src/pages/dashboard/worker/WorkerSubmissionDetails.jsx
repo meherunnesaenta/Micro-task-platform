@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { submissionAPI, taskAPI } from '../../../utils/endpoints';
 import { useAuth } from '../../../context/AuthContext';
-import { ArrowLeft, Clock, CheckCircle, XCircle } from 'lucide-react';
-import '../../../styles/task-details.css';
+import { ArrowLeft, Clock, CheckCircle, XCircle, DollarSign, User, Calendar, FileText, AlertCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const WorkerSubmissionDetails = () => {
   const { id } = useParams();
@@ -17,100 +17,168 @@ const WorkerSubmissionDetails = () => {
     const fetchSubmission = async () => {
       try {
         setLoading(true);
-        const submissionData = await submissionAPI.getTaskSubmissions(submission._id);
+        const submissionData = await submissionAPI.getTaskSubmissions(id);
         setSubmission(submissionData.submission);
         const taskData = await taskAPI.getTaskById(submissionData.task_id);
         setTask(taskData);
       } catch (err) {
         setError('Failed to load submission details');
+        toast.error('Failed to load submission details');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSubmission();
+    if (id) {
+      fetchSubmission();
+    }
   }, [id]);
+
+  const getStatusIcon = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'pending': return <Clock size={20} className="text-yellow-500" />;
+      case 'approved': return <CheckCircle size={20} className="text-green-500" />;
+      case 'rejected': return <XCircle size={20} className="text-red-500" />;
+      default: return <AlertCircle size={20} className="text-gray-500" />;
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const config = {
+      pending: { label: 'Pending', className: 'bg-yellow-500/20 text-yellow-600' },
+      approved: { label: 'Approved', className: 'bg-green-500/20 text-green-600' },
+      rejected: { label: 'Rejected', className: 'bg-red-500/20 text-red-600' },
+    };
+    const c = config[status?.toLowerCase()] || config.pending;
+    return <span className={`px-3 py-1 rounded-full text-sm font-semibold ${c.className}`}>{c.label}</span>;
+  };
 
   if (loading) {
     return (
-      <div className="loading-center">
-        <div className="spinner" />
-        <p>Loading details...</p>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-base-content/60">Loading submission details...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !submission) {
     return (
-      <div className="error-state">
-        <h2>Submission not found</h2>
-        <Link to="/dashboard/worker/submissions" className="btn btn-primary">
-          ← Back to Submissions
+      <div className="text-center py-12">
+        <AlertCircle size={48} className="mx-auto text-base-content/20 mb-3" />
+        <h2 className="text-xl font-bold text-base-content mb-2">Submission not found</h2>
+        <p className="text-base-content/60 mb-4">The submission you're looking for doesn't exist.</p>
+        <Link to="/dashboard/worker/submissions" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+          <ArrowLeft size={16} /> Back to Submissions
         </Link>
       </div>
     );
   }
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'pending': return <Clock className="status-icon pending" />;
-      case 'approved': return <CheckCircle className="status-icon approved" />;
-      case 'rejected': return <XCircle className="status-icon rejected" />;
-      default: return null;
-    }
-  };
-
   return (
-    <div className="submission-details-page">
-      <div className="page-header">
-        <Link to="/dashboard/worker/submissions" className="back-btn">
-          <ArrowLeft size={20} /> Back to Submissions
-        </Link>
-        <h1>Submission Details</h1>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <Link to="/dashboard/worker/submissions" className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors mb-3">
+            <ArrowLeft size={16} /> Back to Submissions
+          </Link>
+          <h1 className="text-2xl md:text-3xl font-bold text-base-content">Submission Details</h1>
+          <p className="text-base-content/60 mt-1">Review your task submission status and details</p>
+        </div>
       </div>
 
-      <div className="submission-details-card">
-        <div className="submission-header">
-          <div className="submission-meta">
-            <h2>{submission.task_title}</h2>
-            <div className="status-badge-wrapper">
-              {getStatusIcon(submission.status)}
-              <span className={`status-badge ${submission.status}`}>
-                {submission.status.toUpperCase()}
-              </span>
+      {/* Main Card */}
+      <div className="bg-base-200 rounded-2xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-primary p-6 text-white">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold mb-2">{submission.task_title}</h2>
+              <div className="flex flex-wrap items-center gap-3">
+                {getStatusIcon(submission.status)}
+                {getStatusBadge(submission.status)}
+              </div>
             </div>
-            <div className="submission-date">
-              Submitted: {new Date(submission.submitted_date).toLocaleString()}
-              {submission.reviewed_date && (
-                <> | Reviewed: {new Date(submission.reviewed_date).toLocaleString()}</>
-              )}
+            <div className="text-center md:text-right">
+              <div className="text-2xl font-bold">${submission.payable_amount}</div>
+              <div className="text-white/70 text-sm">Reward Amount</div>
             </div>
-          </div>
-          <div className="submission-reward">
-            <span className="reward-amount">${submission.payable_amount}</span>
-            <span className="reward-label">Reward</span>
           </div>
         </div>
 
-        <div className="submission-content">
-          <div className="buyer-info">
-            <h3>Buyer: {submission.buyer_name}</h3>
-            <p>{task?.task_detail}</p>
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Submission Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-base-300">
+            <div className="flex items-center gap-3">
+              <Calendar size={16} className="text-primary" />
+              <div>
+                <p className="text-xs text-base-content/50">Submitted Date</p>
+                <p className="text-sm font-medium text-base-content">
+                  {new Date(submission.submitted_date).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            {submission.reviewed_date && (
+              <div className="flex items-center gap-3">
+                <CheckCircle size={16} className="text-green-500" />
+                <div>
+                  <p className="text-xs text-base-content/50">Reviewed Date</p>
+                  <p className="text-sm font-medium text-base-content">
+                    {new Date(submission.reviewed_date).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="your-submission">
-            <h3>Your Submission</h3>
-            <div className="submission-text">
-              {submission.submission_details}
+          {/* Buyer & Task Info */}
+          <div>
+            <h3 className="text-lg font-bold text-base-content mb-3 flex items-center gap-2">
+              <User size={18} className="text-primary" />
+              Task Information
+            </h3>
+            <div className="bg-base-100 rounded-xl p-4">
+              <p className="text-sm text-base-content/70 mb-2">
+                <span className="font-semibold text-base-content">Posted by:</span> {submission.buyer_name}
+              </p>
+              <p className="text-sm text-base-content/70">
+                <span className="font-semibold text-base-content">Task Description:</span>
+              </p>
+              <p className="text-sm text-base-content mt-1 leading-relaxed">
+                {task?.task_detail || 'No description available'}
+              </p>
             </div>
           </div>
 
+          {/* Your Submission */}
+          <div>
+            <h3 className="text-lg font-bold text-base-content mb-3 flex items-center gap-2">
+              <FileText size={18} className="text-primary" />
+              Your Submission
+            </h3>
+            <div className="bg-base-100 rounded-xl p-4">
+              <p className="text-sm text-base-content leading-relaxed whitespace-pre-wrap">
+                {submission.submission_details}
+              </p>
+            </div>
+          </div>
+
+          {/* Resubmit Section for Rejected */}
           {submission.status === 'rejected' && task && (
-            <div className="resubmit-section">
-              <h3>Task Still Available</h3>
-              <Link to={`/dashboard/worker/tasks/${task._id}`} className="btn btn-primary">
-                Resubmit
-              </Link>
+            <div className="bg-yellow-500/10 rounded-xl p-5 border border-yellow-500/30">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-base-content mb-1">Task Still Available</h3>
+                  <p className="text-sm text-base-content/60">Your submission was rejected. You can resubmit the task.</p>
+                </div>
+                <Link to={`/dashboard/worker/tasks/${task._id}`} className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors text-center">
+                  Resubmit Task
+                </Link>
+              </div>
             </div>
           )}
         </div>

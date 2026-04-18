@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Edit2, Save, X, Home } from 'lucide-react';
-import '../../../styles/buyer-dashboard.css';
+import { Edit2, Save, X, Home, User, Mail, Phone, MapPin, Briefcase, Award, Calendar, Shield, Camera } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const WorkerProfile = () => {
@@ -33,11 +32,10 @@ const WorkerProfile = () => {
     setLoading(true);
     try {
       await updateProfile(formData);
-      toast.success('Profile updated successfully');
+      toast.success('Profile updated successfully!');
       setIsEditing(false);
     } catch (error) {
       toast.error('Failed to update profile');
-      console.error('Error updating profile:', error);
     } finally {
       setLoading(false);
     }
@@ -57,222 +55,246 @@ const WorkerProfile = () => {
     setIsEditing(false);
   };
 
+  const infoItems = [
+    { label: 'Full Name', value: formData.name, icon: <User size={16} />, key: 'name' },
+    { label: 'Email Address', value: formData.email, icon: <Mail size={16} />, key: 'email' },
+    { label: 'Phone Number', value: formData.phone || 'Not provided', icon: <Phone size={16} />, key: 'phone' },
+    { label: 'Address', value: formData.address || 'Not provided', icon: <MapPin size={16} />, key: 'address' },
+    { label: 'City', value: formData.city || 'Not provided', icon: <MapPin size={16} />, key: 'city' },
+    { label: 'Country', value: formData.country || 'Not provided', icon: <MapPin size={16} />, key: 'country' },
+  ];
+
   return (
-    <div className="buyer-profile">
-      <div className="page-header">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1>Worker Profile Settings</h1>
-          <p>Manage your worker account and profile information</p>
+          <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-3">
+            <Briefcase size={14} className="text-primary" />
+            <span className="text-primary font-semibold text-sm">Worker Profile</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-base-content">Profile Settings</h1>
+          <p className="text-base-content/60 mt-1">Manage your worker account and profile information</p>
         </div>
         <button
-          className="btn btn-secondary"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-base-200 hover:bg-base-300 transition-colors text-sm font-medium"
           onClick={() => navigate('/dashboard/worker/home')}
         >
-          <Home size={18} /> Back to Home
+          <Home size={16} />
+          Back to Home
         </button>
       </div>
 
-      <div className="profile-container">
-        {/* Profile Header */}
-        <div className="profile-header-card">
-          <div className="profile-avatar-section">
-            <img
-              src={user?.photoURL || 'https://via.placeholder.com/120'}
-              alt={user?.name}
-              className="profile-avatar"
-            />
-            <div className="profile-basic-info">
-              <h2>{user?.name}</h2>
-              <p>Worker</p>
+      {/* Profile Container */}
+      <div className="bg-base-200 rounded-2xl overflow-hidden">
+        
+        {/* Profile Header Card */}
+        <div className="bg-primary p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex items-center gap-5">
+              {/* Avatar */}
+              <div className="relative group">
+                <img
+                  src={user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Worker')}&background=ffffff&color=3b82f6&bold=true&length=2&size=120`}
+                  alt={user?.name}
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover ring-4 ring-white/30 shadow-xl"
+                />
+                <button className="absolute bottom-0 right-0 p-1.5 bg-white rounded-full shadow-lg">
+                  <Camera size={14} className="text-primary" />
+                </button>
+              </div>
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-white">{user?.name}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <Briefcase size={14} className="text-yellow-300" />
+                  <p className="text-white/90">Worker</p>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <span className="text-xs text-white/80">Active Member</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="profile-stats">
-            <div className="stat">
-              <span className="stat-value">{user?.coins || 0}</span>
-              <span className="stat-label">Coins Earned</span>
-            </div>
-            <div className="stat">
-              <span className="stat-value">{user?.tasksCompleted || 0}</span>
-              <span className="stat-label">Tasks Completed</span>
+            
+            {/* Stats */}
+            <div className="flex gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user?.coins?.toLocaleString() || 0}</div>
+                <div className="text-xs text-white/70">Coins Earned</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white">{user?.tasksCompleted || 0}</div>
+                <div className="text-xs text-white/70">Tasks Completed</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white flex items-center gap-1">
+                  <Award size={18} />
+                  {user?.level || 'Bronze'}
+                </div>
+                <div className="text-xs text-white/70">Level</div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Profile Form */}
-        <div className="profile-form-section">
-          <div className="form-header">
-            <h3>Personal Information</h3>
+        {/* Profile Form Section */}
+        <div className="p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-4 border-b border-base-300">
+            <h3 className="text-xl font-bold text-base-content">Personal Information</h3>
             {!isEditing && (
               <button
-                className="btn btn-secondary"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 text-sm font-medium"
                 onClick={() => setIsEditing(true)}
               >
-                <Edit2 size={18} /> Edit Profile
+                <Edit2 size={16} />
+                Edit Profile
               </button>
             )}
           </div>
 
           {isEditing ? (
-            <form className="profile-form">
-              <div className="form-grid">
-                <div className="form-group">
-                  <label htmlFor="name">Full Name</label>
+            // Edit Mode Form
+            <form className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Full Name</label>
                   <input
                     type="text"
-                    id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Email Address</label>
                   <input
                     type="email"
-                    id="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
                     disabled
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-300 border border-base-300 cursor-not-allowed"
                   />
-                  <small>Email cannot be changed</small>
+                  <small className="text-xs text-base-content/40">Email cannot be changed</small>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="phone">Phone Number</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Phone Number</label>
                   <input
                     type="tel"
-                    id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+1 (555) 000-0000"
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="address">Address</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Address</label>
                   <input
                     type="text"
-                    id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
                     placeholder="Street address"
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="city">City</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">City</label>
                   <input
                     type="text"
-                    id="city"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
                     placeholder="City"
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="country">Country</label>
+                <div>
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Country</label>
                   <input
                     type="text"
-                    id="country"
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
                     placeholder="Country"
-                    className="form-input"
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
-                <div className="form-group full-width">
-                  <label htmlFor="skills">Skills & Expertise</label>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Skills & Expertise</label>
                   <textarea
-                    id="skills"
                     name="skills"
                     value={formData.skills}
                     onChange={handleChange}
                     placeholder="List your skills (e.g., Data Entry, Writing, Design)"
-                    className="form-textarea"
                     rows="3"
-                  ></textarea>
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
                 </div>
 
-                <div className="form-group full-width">
-                  <label htmlFor="bio">Bio</label>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-base-content/80 mb-2">Bio</label>
                   <textarea
-                    id="bio"
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
                     placeholder="Tell us about yourself and your experience"
-                    className="form-textarea"
                     rows="4"
-                  ></textarea>
+                    className="w-full px-4 py-2.5 rounded-lg bg-base-100 border border-base-300 focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
                 </div>
               </div>
 
-              <div className="form-actions">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="px-6 py-2.5 rounded-lg border border-base-300 text-base-content/70 hover:bg-base-300 transition-colors flex items-center gap-2"
                   onClick={handleCancel}
                   disabled={loading}
                 >
-                  <X size={18} /> Cancel
+                  <X size={16} /> Cancel
                 </button>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="px-6 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
                   onClick={handleSave}
                   disabled={loading}
                 >
-                  <Save size={18} /> {loading ? 'Saving...' : 'Save Changes'}
+                  <Save size={16} /> {loading ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>
           ) : (
-            <div className="profile-display">
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>Full Name</label>
-                  <p>{formData.name}</p>
+            // Display Mode
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {infoItems.map((item, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-base-100">
+                  <div className="text-primary mt-0.5">{item.icon}</div>
+                  <div>
+                    <label className="text-xs text-base-content/50 uppercase tracking-wide">{item.label}</label>
+                    <p className="text-base-content font-medium mt-0.5">{item.value}</p>
+                  </div>
                 </div>
-                <div className="info-item">
-                  <label>Email Address</label>
-                  <p>{formData.email}</p>
+              ))}
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-base-100">
+                <div className="text-primary mt-0.5"><Briefcase size={16} /></div>
+                <div className="flex-1">
+                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Skills</label>
+                  <p className="text-base-content mt-0.5">{formData.skills || 'No skills added yet.'}</p>
                 </div>
-                <div className="info-item">
-                  <label>Phone Number</label>
-                  <p>{formData.phone || 'Not provided'}</p>
-                </div>
-                <div className="info-item">
-                  <label>Address</label>
-                  <p>{formData.address || 'Not provided'}</p>
-                </div>
-                <div className="info-item">
-                  <label>City</label>
-                  <p>{formData.city || 'Not provided'}</p>
-                </div>
-                <div className="info-item">
-                  <label>Country</label>
-                  <p>{formData.country || 'Not provided'}</p>
-                </div>
-                <div className="info-item full-width">
-                  <label>Skills & Expertise</label>
-                  <p>{formData.skills || 'Not provided'}</p>
-                </div>
-                <div className="info-item full-width">
-                  <label>Bio</label>
-                  <p>{formData.bio || 'Not provided'}</p>
+              </div>
+              <div className="md:col-span-2 flex items-start gap-3 p-3 rounded-lg bg-base-100">
+                <div className="text-primary mt-0.5"><User size={16} /></div>
+                <div className="flex-1">
+                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Bio</label>
+                  <p className="text-base-content mt-0.5">{formData.bio || 'No bio provided yet.'}</p>
                 </div>
               </div>
             </div>
