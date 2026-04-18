@@ -1,32 +1,43 @@
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { CardElement, Elements, useStripe, useElements } from '@stripe/react-stripe-js';
-
-  import { useAuth } from '../../../context/AuthContext';
-
+import { useAuth } from '../../../context/AuthContext';
 import { paymentAPI } from '../../../utils/endpoints';
-import { Coins, CreditCard } from 'lucide-react';
-import '../../../styles/buyer-dashboard.css';
+import { Coins, CreditCard, Zap, Shield, Award, X, Lock, Sparkles } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const CoinPackage = ({ amount, coins, bonus, discountPercent, onSelect, isSelected }) => {
+  const totalCoins = coins + bonus;
+  const pricePerCoin = (amount / totalCoins).toFixed(2);
+  
   return (
-    <div className={`coin-package ${isSelected ? 'selected' : ''}`}>
-      {discountPercent > 0 && <span className="discount-badge">-{discountPercent}%</span>}
-      <div className="package-content">
-        <h3>${amount}</h3>
-        <div className="coins-display">
-          <Coins size={24} />
-          <span className="coins-amount">{coins} Coins</span>
+    <div className={`relative bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer ${
+      isSelected ? 'ring-2 ring-primary shadow-lg' : ''
+    }`} onClick={() => onSelect({ amount, coins: totalCoins })}>
+      {discountPercent > 0 && (
+        <div className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          Save {discountPercent}%
         </div>
-        {bonus > 0 && <p className="bonus">+ {bonus} Bonus Coins</p>}
-        <button
-          className={`btn ${isSelected ? 'btn-primary' : 'btn-secondary'}`}
-          onClick={() => onSelect({ amount, coins: coins + bonus })}
-        >
-          {isSelected ? 'Selected' : 'Select'}
+      )}
+      <div className="text-center">
+        <div className="text-3xl font-bold text-base-content mb-2">${amount}</div>
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <Coins size={20} className="text-primary" />
+          <span className="text-2xl font-bold text-primary">{totalCoins}</span>
+          <span className="text-sm text-base-content/50">coins</span>
+        </div>
+        {bonus > 0 && (
+          <p className="text-xs text-green-600 mb-2">+{bonus} bonus coins</p>
+        )}
+        <p className="text-xs text-base-content/40 mb-4">${pricePerCoin}/coin</p>
+        <button className={`w-full py-2 rounded-lg font-medium transition-colors ${
+          isSelected 
+            ? 'bg-primary text-white' 
+            : 'bg-base-100 text-base-content hover:bg-primary/10'
+        }`}>
+          {isSelected ? 'Selected' : 'Select Package'}
         </button>
       </div>
     </div>
@@ -49,62 +60,58 @@ const PaymentForm = ({ selectedPackage, onClose }) => {
         return;
       }
 
-
-      // Dummy direct payment - no card needed
       const response = await paymentAPI.purchaseCoins({
         amount: selectedPackage.amount,
         coins: selectedPackage.coins
       });
 
       toast.success(`Successfully purchased ${selectedPackage.coins} coins!`);
-      refreshUser();
+      await refreshUser();
       onClose();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Payment failed');
-      console.log('Payment error:', error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handlePayment} className="payment-form">
-      <div className="form-group">
-        <label>Card Details</label>
-        <div className="card-element">
+    <form onSubmit={handlePayment} className="space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-base-content/80 mb-2">Card Details</label>
+        <div className="p-3 rounded-lg bg-base-100 border border-base-300">
           <CardElement
             options={{
               style: {
                 base: {
                   fontSize: '16px',
-                  color: '#424770',
-                  '::placeholder': {
-                    color: '#aab7c4',
-                  },
+                  color: '#1a1f2e',
+                  fontFamily: 'Inter, sans-serif',
+                  '::placeholder': { color: '#aab7c4' },
                 },
-                invalid: {
-                  color: '#9e2146',
-                },
+                invalid: { color: '#ef4444' },
               },
             }}
           />
         </div>
       </div>
 
-      <div className="form-group">
-        <p className="payment-summary">
-          Total Amount: <strong>${selectedPackage.amount}</strong>
-        </p>
-        <p className="coins-summary">
-          You'll receive: <strong>{selectedPackage.coins} Coins</strong>
-        </p>
+      <div className="bg-primary/10 rounded-lg p-4 space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-base-content/60">Total Amount:</span>
+          <span className="font-bold text-primary">${selectedPackage.amount}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-base-content/60">You'll receive:</span>
+          <span className="font-bold text-primary">{selectedPackage.coins} Coins</span>
+        </div>
       </div>
 
-      <div className="form-actions">
-        <button type="button" className="btn btn-secondary" onClick={onClose}>
+      <div className="flex gap-3">
+        <button type="button" className="flex-1 px-4 py-2 rounded-lg border border-base-300 hover:bg-base-300 transition-colors" onClick={onClose}>
           Cancel
         </button>
-        <button type="submit" className="btn btn-primary" disabled={loading}>
+        <button type="submit" className="flex-1 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-50" disabled={loading}>
           {loading ? 'Processing...' : `Pay $${selectedPackage.amount}`}
         </button>
       </div>
@@ -118,10 +125,10 @@ const BuyerPurchaseCoin = () => {
   const { user, refreshUser } = useAuth();
 
   const coinPackages = [
-    { amount: 5, coins: 50, bonus: 0, discountPercent: 0 },
-    { amount: 10, coins: 110, bonus: 10, discountPercent: 10 },
-    { amount: 25, coins: 285, bonus: 35, discountPercent: 12 },
-    { amount: 50, coins: 600, bonus: 100, discountPercent: 20 },
+    { amount: 5, coins: 50, bonus: 0, discountPercent: 0, popular: false },
+    { amount: 10, coins: 110, bonus: 10, discountPercent: 10, popular: true },
+    { amount: 25, coins: 285, bonus: 35, discountPercent: 12, popular: false },
+    { amount: 50, coins: 600, bonus: 100, discountPercent: 20, popular: false },
   ];
 
   const handleSelectPackage = (pkg) => {
@@ -130,69 +137,119 @@ const BuyerPurchaseCoin = () => {
   };
 
   return (
-    <div className="buyer-purchase-coin">
-      <div className="page-header">
-        <h1>Purchase Coins</h1>
-        <p>Get more coins to post tasks</p>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-3">
+          <CreditCard size={14} className="text-primary" />
+          <span className="text-primary font-semibold text-sm">Purchase Coins</span>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold text-base-content">Purchase Coins</h1>
+        <p className="text-base-content/60 mt-1">Get more coins to post tasks</p>
       </div>
 
-      <div className="current-balance">
-        <div className="balance-card">
-          <Coins size={40} />
+      {/* Current Balance */}
+      <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-6 text-white">
+        <div className="flex items-center gap-4">
+          <div className="bg-white/20 rounded-full p-3">
+            <Coins size={32} className="text-white" />
+          </div>
           <div>
-            <p>Current Balance</p>
-            <h2>{user?.coins || 0} Coins</h2>
+            <p className="text-white/80 text-sm">Current Balance</p>
+            <p className="text-3xl font-bold">{user?.coins?.toLocaleString() || 0} Coins</p>
           </div>
         </div>
       </div>
 
-      <div className="coin-packages-section">
-        <h2>Choose Your Package</h2>
-        <p>More coins for less with larger packages</p>
-        <div className="packages-grid">
+      {/* Coin Packages */}
+      <div>
+        <h2 className="text-xl font-bold text-base-content mb-2 flex items-center gap-2">
+          <Zap size={18} className="text-primary" />
+          Choose Your Package
+        </h2>
+        <p className="text-base-content/60 mb-5">More coins for less with larger packages</p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {coinPackages.map((pkg, idx) => (
-            <CoinPackage
-              key={idx}
-              {...pkg}
-              onSelect={handleSelectPackage}
-              isSelected={selectedPackage?.amount === pkg.amount}
-            />
+            <div key={idx} className="relative">
+              {pkg.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                  <span className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                    <Sparkles size={12} /> Most Popular
+                  </span>
+                </div>
+              )}
+              <CoinPackage
+                {...pkg}
+                onSelect={handleSelectPackage}
+                isSelected={selectedPackage?.amount === pkg.amount}
+              />
+            </div>
           ))}
         </div>
       </div>
 
-      <div className="faq-section">
-        <h2>Frequently Asked Questions</h2>
-        <div className="faq-grid">
-          <div className="faq-item">
-            <h3>How do coins work?</h3>
-            <p>Each task requires coins equal to (workers × amount per worker). Coins are deducted when the task is created.</p>
+      {/* Features */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-base-200 rounded-xl p-4 text-center">
+          <Shield size={24} className="mx-auto text-primary mb-2" />
+          <h3 className="font-semibold text-base-content">Secure Payment</h3>
+          <p className="text-xs text-base-content/50">256-bit SSL encryption</p>
+        </div>
+        <div className="bg-base-200 rounded-xl p-4 text-center">
+          <Zap size={24} className="mx-auto text-primary mb-2" />
+          <h3 className="font-semibold text-base-content">Instant Delivery</h3>
+          <p className="text-xs text-base-content/50">Coins added instantly</p>
+        </div>
+        <div className="bg-base-200 rounded-xl p-4 text-center">
+          <Award size={24} className="mx-auto text-primary mb-2" />
+          <h3 className="font-semibold text-base-content">Bonus Coins</h3>
+          <p className="text-xs text-base-content/50">Extra coins on larger packs</p>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="bg-base-200 rounded-2xl p-6">
+        <h2 className="text-xl font-bold text-base-content mb-4">Frequently Asked Questions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-semibold text-base-content mb-1">How do coins work?</h3>
+            <p className="text-sm text-base-content/60">Each task requires coins equal to (workers × amount per worker). Coins are deducted when the task is created.</p>
           </div>
-          <div className="faq-item">
-            <h3>Can I refund coins?</h3>
-            <p>Coins purchased are non-refundable, but unused coins remain in your account indefinitely.</p>
+          <div>
+            <h3 className="font-semibold text-base-content mb-1">Can I refund coins?</h3>
+            <p className="text-sm text-base-content/60">Coins purchased are non-refundable, but unused coins remain in your account indefinitely.</p>
           </div>
-          <div className="faq-item">
-            <h3>Are there payment plans?</h3>
-            <p>We accept all major credit cards and offer secure payment processing via Stripe.</p>
+          <div>
+            <h3 className="font-semibold text-base-content mb-1">Are there payment plans?</h3>
+            <p className="text-sm text-base-content/60">We accept all major credit cards and offer secure payment processing via Stripe.</p>
           </div>
-          <div className="faq-item">
-            <h3>What if I need more?</h3>
-            <p>You can purchase coins anytime. Bonus coins are instantly added to your account.</p>
+          <div>
+            <h3 className="font-semibold text-base-content mb-1">What if I need more?</h3>
+            <p className="text-sm text-base-content/60">You can purchase coins anytime. Bonus coins are instantly added to your account.</p>
           </div>
         </div>
       </div>
 
+      {/* Payment Modal */}
       {showPaymentModal && selectedPackage && (
-        <div className="modal-overlay" onClick={() => setShowPaymentModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Complete Payment</h2>
-            <Elements stripe={stripePromise}>
-              <PaymentForm
-                selectedPackage={selectedPackage}
-                onClose={() => setShowPaymentModal(false)}
-              />
-            </Elements>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setShowPaymentModal(false)}>
+          <div className="bg-base-200 rounded-2xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-5 border-b border-base-300">
+              <h2 className="text-xl font-bold text-base-content">Complete Payment</h2>
+              <button onClick={() => setShowPaymentModal(false)} className="p-1 rounded-lg hover:bg-base-300 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-5">
+              <div className="bg-primary/10 rounded-lg p-3 mb-4 flex items-center justify-between">
+                <span className="text-sm text-base-content/60">Package:</span>
+                <span className="font-bold text-primary">{selectedPackage.coins} Coins</span>
+              </div>
+              <Elements stripe={stripePromise}>
+                <PaymentForm selectedPackage={selectedPackage} onClose={() => setShowPaymentModal(false)} />
+              </Elements>
+            </div>
           </div>
         </div>
       )}
