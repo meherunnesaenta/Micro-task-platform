@@ -1,94 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Briefcase, Users, DollarSign, Calendar, ArrowRight } from 'lucide-react';
+import { Briefcase, Users, DollarSign, Calendar, ArrowRight, Eye } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { taskAPI } from '../../utils/endpoints';
-import '../../styles/home.css';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const PostedTasks = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchPostedTasks();
-  }, []);
+  }, [page]);
 
-const fetchPostedTasks = async () => {
-      setLoading(true);
-      // Always use mock data for home page (public, no auth)
-        const mockTasks = [
-          {
-            _id: '1',
-            task_title: 'Social Media Engagement',
-            buyer_name: 'ABC Corp',
-            payable_amount: 2.5,
-            required_workers: 150,
-            completion_date: '2024-12-31',
-            task_image_url: 'https://images.unsplash.com/photo-1611162617213-7d220c8ae000?w=400',
-            task_detail: 'Like and comment on 5 posts',
-            category: 'Social Media'
-          },
-          {
-            _id: '2',
-            task_title: 'Data Entry',
-            buyer_name: 'DataPro Inc',
-            payable_amount: 1.8,
-            required_workers: 200,
-            completion_date: '2024-12-28',
-            task_image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400',
-            task_detail: 'Enter 50 records into spreadsheet',
-            category: 'Data Entry'
-          },
-          {
-            _id: '3',
-            task_title: 'App Testing',
-            buyer_name: 'TechStart',
-            payable_amount: 5.0,
-            required_workers: 80,
-            completion_date: '2024-12-30',
-            task_image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
-            task_detail: 'Test mobile app and report bugs',
-            category: 'Testing'
-          },
-          {
-            _id: '4',
-            task_title: 'Content Research',
-            buyer_name: 'MarketingHub',
-            payable_amount: 3.2,
-            required_workers: 120,
-            completion_date: '2024-12-29',
-            task_image_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400',
-            task_detail: 'Research 10 competitors and report findings',
-            category: 'Web Research'
-          },
-          {
-            _id: '5',
-            task_title: 'Image Annotation',
-            buyer_name: 'AI Vision',
-            payable_amount: 1.2,
-            required_workers: 300,
-            completion_date: '2024-12-31',
-            task_image_url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400',
-            task_detail: 'Label 100 images for AI training',
-            category: 'Image Tagging'
-          },
-          {
-            _id: '6',
-            task_title: 'Video Transcription',
-            buyer_name: 'MediaCorp',
-            payable_amount: 4.5,
-            required_workers: 60,
-            completion_date: '2024-12-28',
-            task_image_url: 'https://images.unsplash.com/photo-1482780442678-3a5168a61c15?w=400',
-            task_detail: 'Transcribe 30 minutes of video content',
-            category: 'Transcription'
-          }
-        ];
-      setTasks(mockTasks);
+  const fetchPostedTasks = async () => {
+    setLoading(true);
+    try {
+      // API call to public endpoint (no auth token needed)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/public/tasks?page=${page}&limit=6`);
+      
+      if (response.data.success) {
+        setTasks(response.data.tasks);
+        setTotalPages(response.data.pages);
+      } else {
+        setTasks([]);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      toast.error('Failed to load tasks');
+      setTasks([]);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -114,31 +62,45 @@ const fetchPostedTasks = async () => {
 
   const handleBrowseAllTasks = () => {
     if (!user) {
-      // Not logged in - redirect to login with callback
       navigate('/login', { state: { from: '/tasks' } });
     } else if (user.role === 'worker') {
-      // Worker - go to worker tasks
       navigate('/dashboard/worker/tasks');
     } else if (user.role === 'buyer') {
-      // Buyer - go to buyer my tasks
       navigate('/dashboard/buyer/my-tasks');
     } else if (user.role === 'admin') {
-      // Admin - go to admin manage tasks
       navigate('/dashboard/admin/tasks');
+    }
+  };
+
+  const handleViewTask = (taskId) => {
+    if (!user) {
+      navigate('/login', { state: { from: `/task/${taskId}` } });
+    } else {
+      navigate(`/dashboard/worker/tasks/${taskId}`);
     }
   };
 
   if (loading) {
     return (
-      <section className="py-16 bg-gradient-to-b from-base-100 to-base-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-base-100">
+        <div className="container-modern">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-4">
               <Briefcase size={14} className="text-primary" />
               <span className="text-primary font-medium text-sm">Latest Opportunities</span>
             </div>
-            <h2 className="text-4xl font-bold text-base-content mt-4 mb-2">Posted Tasks</h2>
-            <p className="text-base-content/60 text-lg">Loading available tasks...</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-base-content mb-2">Posted Tasks</h2>
+            <p className="text-base-content/60">Loading available tasks...</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-base-200 rounded-xl p-6 animate-pulse">
+                <div className="w-full h-40 bg-base-300 rounded-lg mb-4"></div>
+                <div className="h-5 bg-base-300 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-base-300 rounded w-full mb-2"></div>
+                <div className="h-4 bg-base-300 rounded w-2/3"></div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -146,24 +108,25 @@ const fetchPostedTasks = async () => {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-b from-base-100 to-base-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-base-100">
+      <div className="container-modern">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-4">
             <Briefcase size={14} className="text-primary" />
             <span className="text-primary font-medium text-sm">Latest Opportunities</span>
           </div>
-          <h2 className="text-4xl font-bold text-base-content mt-4 mb-2">Posted Tasks</h2>
-          <p className="text-base-content/60 text-lg">
+          <h2 className="text-3xl sm:text-4xl font-bold text-base-content mb-2">Posted Tasks</h2>
+          <p className="text-base-content/60">
             Browse available tasks and start earning today
           </p>
         </div>
 
         {tasks.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12 bg-base-200 rounded-xl">
             <Briefcase size={48} className="mx-auto text-base-content/30 mb-4" />
-            <p className="text-base-content/60">No tasks available yet</p>
+            <p className="text-base-content/60">No tasks available at the moment</p>
+            <p className="text-xs text-base-content/40 mt-1">Check back later!</p>
           </div>
         ) : (
           <>
@@ -172,25 +135,25 @@ const fetchPostedTasks = async () => {
               {tasks.map((task) => (
                 <div
                   key={task._id}
-                  className="bg-base-100 rounded-xl border border-base-300 overflow-hidden hover:shadow-xl transition-all duration-300 hover:border-primary/50 flex flex-col"
+                  className="bg-base-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
                 >
                   {/* Task Image */}
-                  {task.task_image && (
-                    <div className="h-40 bg-gradient-to-br from-primary to-secondary overflow-hidden">
+                  {task.task_image_url && (
+                    <div className="h-48 overflow-hidden">
                       <img
-                        src={task.task_image}
-                        alt={task.title}
+                        src={task.task_image_url}
+                        alt={task.task_title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   )}
 
                   {/* Task Content */}
-                  <div className="p-6 flex-1 flex flex-col">
+                  <div className="p-5 flex-1 flex flex-col">
                     {/* Category Badge */}
                     <div className="mb-3">
                       <span
-                        className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-base-100"
+                        className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
                         style={{ backgroundColor: getCategoryColor(task.category) }}
                       >
                         {task.category}
@@ -199,54 +162,80 @@ const fetchPostedTasks = async () => {
 
                     {/* Title */}
                     <h3 className="text-lg font-bold text-base-content mb-2 line-clamp-2">
-                      {task.title}
+                      {task.task_title}
                     </h3>
 
+                    {/* Buyer Name */}
+                    <p className="text-sm text-base-content/50 mb-3">
+                      by {task.buyer_name}
+                    </p>
+
                     {/* Description */}
-                    <p className="text-sm text-base-content/60 mb-4 line-clamp-3">
-                      {task.description}
+                    <p className="text-sm text-base-content/60 mb-4 line-clamp-2">
+                      {task.task_detail}
                     </p>
 
                     {/* Task Stats */}
                     <div className="space-y-2 mb-4 flex-1">
-                      <div className="flex items-center gap-2 text-sm text-base-content/70">
-                        <Users size={16} className="text-primary" />
-                        <span>{task.required_workers} workers needed</span>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-base-content/60">Workers Needed</span>
+                        <span className="font-semibold text-base-content">{task.required_workers}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-base-content/70">
-                        <DollarSign size={16} className="text-success" />
-                        <span className="font-semibold">${task.payable_amount}/worker</span>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-base-content/60">Reward</span>
+                        <span className="font-bold text-green-600">${task.payable_amount}</span>
                       </div>
-                      {task.deadline && (
-                        <div className="flex items-center gap-2 text-sm text-base-content/70">
-                          <Calendar size={16} className="text-warning" />
-                          <span>Due: {formatDate(task.deadline)}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-base-content/60">Deadline</span>
+                        <span className="text-base-content/70">{formatDate(task.completion_date)}</span>
+                      </div>
                     </div>
 
                     {/* Action */}
-                    <Link
-                      to={`/dashboard/worker/tasks/${task._id}`}
-                      className="inline-flex items-center justify-center gap-2 w-full py-2 px-4 bg-primary text-primary-content rounded-lg font-semibold hover:bg-primary/90 transition-colors duration-200"
+                    <button
+                      onClick={() => handleViewTask(task._id)}
+                      className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors duration-200"
                     >
                       View Task
-                      <ArrowRight size={16} />
-                    </Link>
+                      <Eye size={16} />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
 
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-2 mt-8">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-4 py-2 rounded-lg border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-sm text-base-content/60">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 rounded-lg border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+
             {/* View All Button */}
             {tasks.length > 0 && (
-              <div className="text-center">
+              <div className="text-center mt-8">
                 <button
                   onClick={handleBrowseAllTasks}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-secondary text-primary-content rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer border-0"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary/90 transition-all duration-300"
                 >
-                  {user ? `Browse All Tasks (${user.role})` : 'Browse All Tasks'}
-                  <ArrowRight size={20} />
+                  {user ? `Browse All Tasks` : 'Login to Browse All Tasks'}
+                  <ArrowRight size={18} />
                 </button>
               </div>
             )}

@@ -56,22 +56,8 @@ const Home = () => {
         <Banner />
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 border-y border-base-200 bg-base-100">
-        <div className="container-modern">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center text-primary mb-3">
-                  {stat.icon}
-                </div>
-                <div className="text-2xl md:text-3xl font-bold text-base-content">{stat.value}</div>
-                <div className="text-sm text-base-content/50 mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Posted Tasks Section */}
+      <PostedTasks />
 
       {/* Features Section */}
       <section className="py-16">
@@ -114,8 +100,7 @@ const Home = () => {
         <TopWorker />
       </section>
 
-      {/* Posted Tasks Section */}
-      <PostedTasks />
+
 
       {/* Testimonials Section */}
       <section className="py-16 bg-base-100">
