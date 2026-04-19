@@ -54,7 +54,7 @@ A full-stack micro-task platform where users can earn money by completing small 
 
 **Admin Dashboard Preview:**
 ```
-![Admin Dashboard](screenshots/admin-dashboard.png)
+![Admin Dashboard](/client/public/screenshorts/admin-dashboard.png)
 
 ```
 
