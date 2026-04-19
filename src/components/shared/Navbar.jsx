@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  LogOut, 
-  User, 
-  GitBranch, 
+import {
+  LogOut,
+  User,
+  GitBranch,
   ChevronDown,
   Home,
   LayoutDashboard,
@@ -25,7 +25,7 @@ const Navbar = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
+
   const userDropdownRef = useRef(null);
 
   useEffect(() => {
@@ -80,25 +80,24 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled 
-          ? 'bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-md' 
-          : 'bg-base-100 border-b border-base-200'
-      }`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
+        ? 'bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-md'
+        : 'bg-base-100 border-b border-base-200'
+        }`}>
         <div className="container-modern">
           <div className="flex justify-between items-center h-16 md:h-[72px]">
-            
+
             <div className="flex-shrink-0">
               <Logo />
-            </div>    
+            </div>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
-              
+
               {isAuthenticated && (
                 <div className="flex items-center gap-8">
-                  <Link 
-                    to="/" 
+                  <Link
+                    to="/"
                     className="text-base font-medium text-base-content hover:text-primary transition-colors duration-300"
                   >
                     Home
@@ -107,7 +106,7 @@ const Navbar = () => {
               )}
 
               <div className="flex items-center gap-3">
-                
+
                 {/* Coins Badge - Solid Color */}
                 {isAuthenticated && (
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500 shadow-md">
@@ -181,23 +180,23 @@ const Navbar = () => {
                               </div>
                             </div>
                             <div className="py-2">
-                              <Link 
-                                to="/dashboard" 
+                              <Link
+                                to="/dashboard"
                                 className="flex items-center gap-3 px-4 py-2.5 hover:bg-primary/10 transition-colors text-sm text-base-content"
                                 onClick={() => setIsUserDropdownOpen(false)}
                               >
                                 <LayoutDashboard size={16} /> Dashboard
                               </Link>
-                              <Link 
-                                to="/profile" 
+                              <Link
+                                to="/profile"
                                 className="flex items-center gap-3 px-4 py-2.5 hover:bg-primary/10 transition-colors text-sm text-base-content"
                                 onClick={() => setIsUserDropdownOpen(false)}
                               >
                                 <User size={16} /> Profile
                               </Link>
                               <hr className="my-1 border-base-200" />
-                              <button 
-                                onClick={handleLogout} 
+                              <button
+                                onClick={handleLogout}
                                 className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-red-600 transition-colors text-sm"
                               >
                                 <LogOut size={16} /> Sign Out
@@ -211,22 +210,22 @@ const Navbar = () => {
                 ) : (
                   <div className="flex items-center gap-3">
                     {/* Sign In Button - Ghost */}
-                    <Link 
-                      to="/login" 
+                    <Link
+                      to="/login"
                       className="px-5 py-2 text-base font-medium text-base-content hover:text-primary transition-colors duration-300"
                     >
                       Sign In
                     </Link>
-                    
+
                     {/* Sign Up Button - Solid Primary */}
-                    <Link 
-                      to="/register" 
+                    <Link
+                      to="/register"
                       className="px-6 py-2.5 rounded-full bg-primary text-white font-semibold text-base shadow-md hover:bg-primary/90 hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
                     >
                       Sign Up
                       <Sparkles size={16} />
                     </Link>
-                    
+
                     {/* Developer Button - Outline */}
                     <button
                       onClick={handleGithubClick}
@@ -241,8 +240,8 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <button 
-              onClick={() => setIsMobileMenuOpen(true)} 
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
               className="lg:hidden p-2 rounded-lg bg-base-200 hover:bg-base-300 transition-all duration-300"
             >
               <Menu size={24} />
@@ -268,6 +267,9 @@ const Navbar = () => {
             <div className="flex-1 overflow-y-auto p-5">
               {!isAuthenticated ? (
                 <div className="space-y-3">
+                  <button onClick={toggleTheme} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/10 rounded-xl transition-all duration-300 font-medium">
+                    {isDarkMode ? <Sun size={18} /> : <Moon size={18} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                  </button>
                   <Link to="/login" className="flex items-center justify-center w-full py-3 rounded-xl border border-base-300 hover:border-primary hover:bg-primary/5 transition-all duration-300 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link>
                   <Link to="/register" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-white font-semibold shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
                     Sign Up <Sparkles size={16} />
@@ -290,8 +292,16 @@ const Navbar = () => {
                     <span className="font-bold text-white text-xl flex items-center gap-1"><Coins size={18} /> {user?.coins?.toLocaleString() || 0}</span>
                   </div>
                   <div className="space-y-2">
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-primary/10 transition-colors text-sm text-base-content"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                    >
+                      <LayoutDashboard size={16} /> Dashboard
+                    </Link>
                     <Link to="/" className="flex items-center gap-3 px-4 py-3 hover:bg-primary/10 rounded-xl transition-all duration-300 font-medium" onClick={() => setIsMobileMenuOpen(false)}><Home size={18} /> Home</Link>
                     <Link to="/profile" className="flex items-center gap-3 px-4 py-3 hover:bg-primary/10 rounded-xl transition-all duration-300 font-medium" onClick={() => setIsMobileMenuOpen(false)}><User size={18} /> Profile</Link>
+
                   </div>
                   <div className="border-t border-base-200 pt-5 mt-5">
                     <button onClick={toggleTheme} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/10 rounded-xl transition-all duration-300 font-medium">

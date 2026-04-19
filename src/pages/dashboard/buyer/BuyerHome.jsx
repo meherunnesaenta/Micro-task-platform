@@ -18,10 +18,9 @@ const BuyerHome = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        console.log('Buyer stats fetch start');
-        
+       
         const response = await taskAPI.getMyTasks(1, 100);
-        console.log('Buyer tasks response:', response);
+       
         
         const tasksData = response.tasks || response.data?.tasks || [];
         
@@ -36,12 +35,7 @@ const BuyerHome = () => {
           }
         });
 
-        console.log('Buyer stats calculated:', {
-          totalTasks: tasksData.length,
-          pendingTasks: pending,
-          totalSpent: spent
-        });
-
+       
         setStats({
           totalTasks: tasksData.length,
           pendingTasks: pending,

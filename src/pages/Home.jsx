@@ -83,7 +83,7 @@ const Home = () => {
               <div key={index} className="text-center p-6 bg-base-200 rounded-xl hover:shadow-md transition-all">
                 <div className="relative w-16 h-16 mx-auto bg-primary rounded-xl flex items-center justify-center text-white mb-4">
                   {step.icon}
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-white">
                     {step.number}
                   </div>
                 </div>

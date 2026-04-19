@@ -24,9 +24,9 @@ const AdminHome = () => {
       try {
         setLoading(true);
         
-        console.log('Fetching admin stats...');
+        
         const response = await adminAPI.getStats();
-        console.log('AdminHome stats response:', response);
+        
         
         // Robust response handling
         let statsData = response?.data || response || {};

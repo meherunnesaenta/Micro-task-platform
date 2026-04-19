@@ -83,7 +83,7 @@ const Banner = () => {
               {/* Content */}
               <div className="relative h-full flex items-center">
                 <div className="container-modern">
-                  <div className="max-w-2xl animate-fade-in-up" style={{ animationDelay: `${index * 0.2}s` }}>
+                  <div className="max-w-2xl animate-fade-in-up " style={{ animationDelay: `${index * 0.2}s` }}>
                     {/* Icon Badge */}
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 mb-4 md:mb-6">
                       <span className="text-primary">{banner.icon}</span>

@@ -20,7 +20,7 @@ const ManageWithdrawals = () => {
     setLoading(true);
     try {
       const response = await withdrawalAPI.getPendingWithdrawals(page, limit);
-      console.log('Admin withdrawals response:', response);
+     
       
       let withdrawalsData = [];
       let totalData = 0;

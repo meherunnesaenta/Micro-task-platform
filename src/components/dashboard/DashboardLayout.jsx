@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+
 const DashboardLayout = ({ children, sidebarItems }) => {
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -35,6 +36,7 @@ const DashboardLayout = ({ children, sidebarItems }) => {
 
   // Default sidebar items if none provided
   const defaultSidebarItems = [
+  
     { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { path: '/dashboard/tasks', label: 'Tasks', icon: <Briefcase size={20} /> },
     { path: '/dashboard/submissions', label: 'Submissions', icon: <CheckSquare size={20} /> },
@@ -62,6 +64,7 @@ const DashboardLayout = ({ children, sidebarItems }) => {
               <h1 className="text-lg md:text-xl font-bold text-base-content hidden sm:block">
                 Dashboard
               </h1>
+              
             </div>
           </div>
 
@@ -141,14 +144,7 @@ const DashboardLayout = ({ children, sidebarItems }) => {
                     </div>
                   </div>
                   <div className="py-1">
-                    <Link
-                      to="/profile"
-                      className="flex items-center gap-3 px-3 py-2 text-sm text-base-content hover:bg-base-200 transition-colors duration-200"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      <User size={16} />
-                      Profile Settings
-                    </Link>
+
                     <button
                       className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                       onClick={handleLogout}

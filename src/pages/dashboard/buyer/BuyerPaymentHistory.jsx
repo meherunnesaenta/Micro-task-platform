@@ -22,7 +22,7 @@ const BuyerPaymentHistory = () => {
       setLoading(true);
       const response = await paymentAPI.getPaymentHistory(pagination.currentPage, 10);
       
-      console.log('Payment history response:', response); // Debug
+   
       
       // ✅ Handle different response structures
       let paymentsData = [];
@@ -43,9 +43,7 @@ const BuyerPaymentHistory = () => {
       } else if (Array.isArray(response)) {
         paymentsData = response;
       }
-      
-      console.log('Payments data:', paymentsData);
-      console.log('Total amount:', totalAmountData);
+
       
       setPayments(paymentsData);
       setPagination({

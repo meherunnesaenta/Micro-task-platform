@@ -78,7 +78,6 @@ const PaymentForm = ({ selectedPackage, onClose }) => {
         throw new Error(paymentMethodError.message);
       }
 
-      console.log('Payment method created:', paymentMethod.id);
 
       // Send to backend for coin purchase
       const response = await paymentAPI.purchaseCoins({
@@ -87,7 +86,7 @@ const PaymentForm = ({ selectedPackage, onClose }) => {
         paymentMethodId: paymentMethod.id
       });
 
-      console.log('Purchase response:', response);
+
 
       toast.success(`Successfully purchased ${selectedPackage.coins} coins!`);
       

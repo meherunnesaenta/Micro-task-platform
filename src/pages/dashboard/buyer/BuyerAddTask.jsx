@@ -131,11 +131,11 @@ const BuyerAddTask = () => {
       };
 
       const response = await taskAPI.createTask(taskPayload);
-      console.log('Task created response:', response);
+     
       
       // ✅ Refresh user data to get updated coins
       const updatedUser = await refreshUser();
-      console.log('Updated user coins:', updatedUser?.coins);
+     
       
       toast.success('Task created successfully!');
       navigate('/dashboard/buyer/my-tasks');

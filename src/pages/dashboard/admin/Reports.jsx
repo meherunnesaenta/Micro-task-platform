@@ -35,9 +35,8 @@ const Reports = () => {
   const fetchReportStats = async () => {
     setLoading(true);
     try {
-      console.log('Fetching reports for:', dateRange);
+     
       const response = await adminAPI.getStats(dateRange);
-      console.log('Reports stats response:', response);
       
       const data = response?.data || response || {};
       

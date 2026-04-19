@@ -78,6 +78,7 @@ function App() {
     { path: '/dashboard/worker/submissions', label: 'My Submissions', icon: '✅' },
     { path: '/dashboard/worker/withdrawals', label: 'Withdrawals', icon: '💰' },
     { path: '/dashboard/worker/profile', label: 'Profile Settings', icon: '👤' },
+    { path: '/', label: 'go back', icon: '<-' },
   ];
 
   // Buyer sidebar items
@@ -89,6 +90,7 @@ function App() {
     { path: '/dashboard/buyer/purchase-coin', label: 'Purchase Coin', icon: '🪙' },
     { path: '/dashboard/buyer/payment-history', label: 'Payment History', icon: '📊' },
     { path: '/dashboard/buyer/profile', label: 'Profile Settings', icon: '👤' },
+    { path: '/', label: 'go back', icon: '<-' },
   ];
 
   // Admin sidebar items
@@ -99,6 +101,7 @@ function App() {
     { path: '/dashboard/admin/withdrawals', label: 'Withdrawals', icon: '💰' },
     { path: '/dashboard/admin/reports', label: 'Reports', icon: '⚠️' },
     { path: '/dashboard/admin/profile', label: 'Profile Settings', icon: '👤' },
+    { path: '/', label: 'go back', icon: '<-' },
   ];
 
   return (
