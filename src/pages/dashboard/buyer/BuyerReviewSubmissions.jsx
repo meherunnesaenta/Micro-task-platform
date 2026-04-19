@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { submissionAPI } from '../../../utils/endpoints';
-import { Check, X, Eye, DollarSign, User, Calendar, Clock, AlertCircle, ChevronRight } from 'lucide-react';
+import { Check, X, Eye, DollarSign, User, Calendar, Clock, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const BuyerReviewSubmissions = () => {
@@ -9,7 +9,7 @@ const BuyerReviewSubmissions = () => {
   const taskId = searchParams.get('task');
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [submittingIds, setSubmittingIds] = useState(new Set());
 
   useEffect(() => {
     fetchSubmissions();
@@ -24,7 +24,17 @@ const BuyerReviewSubmissions = () => {
       } else {
         response = await submissionAPI.getReviewSubmissions(1, 50);
       }
-      setSubmissions(response.submissions || response || []);
+      
+      let submissionsData = [];
+      if (response && response.data) {
+        submissionsData = response.data.submissions || response.data || [];
+      } else if (response && response.submissions) {
+        submissionsData = response.submissions;
+      } else if (Array.isArray(response)) {
+        submissionsData = response;
+      }
+      
+      setSubmissions(submissionsData);
     } catch (error) {
       console.error('Error fetching submissions:', error);
       toast.error('Failed to load submissions');
@@ -34,24 +44,47 @@ const BuyerReviewSubmissions = () => {
   };
 
   const handleApprove = async (submissionId) => {
+    setSubmittingIds(prev => new Set([...prev, submissionId]));
     try {
       await submissionAPI.approveSubmission(submissionId);
-      toast.success('Submission approved successfully!');
-      fetchSubmissions();
-      setSelectedSubmission(null);
+      toast.success('Submission approved! Coins sent to worker.');
+      
+      // ✅ Small delay to let backend process
+      setTimeout(() => {
+        fetchSubmissions();
+      }, 500);
+      
     } catch (error) {
-      toast.error('Failed to approve submission');
+      console.error('Approve error:', error);
+      toast.error(error.response?.data?.message || error.message || 'Failed to approve');
+    } finally {
+      setSubmittingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(submissionId);
+        return newSet;
+      });
     }
   };
 
   const handleReject = async (submissionId) => {
+    setSubmittingIds(prev => new Set([...prev, submissionId]));
     try {
       await submissionAPI.rejectSubmission(submissionId);
-      toast.success('Submission rejected successfully!');
-      fetchSubmissions();
-      setSelectedSubmission(null);
+      toast.success('Submission rejected!');
+      
+      setTimeout(() => {
+        fetchSubmissions();
+      }, 500);
+      
     } catch (error) {
-      toast.error('Failed to reject submission');
+      console.error('Reject error:', error);
+      toast.error(error.response?.data?.message || error.message || 'Failed to reject');
+    } finally {
+      setSubmittingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(submissionId);
+        return newSet;
+      });
     }
   };
 
@@ -78,7 +111,6 @@ const BuyerReviewSubmissions = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div>
         <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-3">
           <Eye size={14} className="text-primary" />
@@ -88,7 +120,6 @@ const BuyerReviewSubmissions = () => {
         <p className="text-base-content/60 mt-1">Review and approve worker submissions</p>
       </div>
 
-      {/* Submissions Grid */}
       {submissions.length === 0 ? (
         <div className="text-center py-12 bg-base-200 rounded-xl">
           <Clock size={48} className="mx-auto text-base-content/20 mb-3" />
@@ -99,17 +130,16 @@ const BuyerReviewSubmissions = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {submissions.map((submission) => (
             <div key={submission._id} className="bg-base-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
-              {/* Header */}
               <div className="bg-primary p-4 text-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <img
                       src={submission.worker_id?.photoURL || `https://ui-avatars.com/api/?name=${submission.worker_id?.name?.charAt(0) || 'W'}&background=ffffff&color=3b82f6&bold=true`}
-                      alt={submission.worker_id?.name}
+                      alt={submission.worker_name}
                       className="w-10 h-10 rounded-full object-cover ring-2 ring-white/30"
                     />
                     <div>
-                      <p className="font-semibold">{submission.worker_id?.name || 'Unknown Worker'}</p>
+                      <p className="font-semibold">{submission.worker_name || 'Unknown Worker'}</p>
                       <p className="text-white/80 text-sm">{submission.task_id?.title || submission.task_title}</p>
                     </div>
                   </div>
@@ -117,7 +147,6 @@ const BuyerReviewSubmissions = () => {
                 </div>
               </div>
 
-              {/* Content */}
               <div className="p-5">
                 <div className="mb-4">
                   <p className="text-sm text-base-content/70 leading-relaxed">
@@ -128,7 +157,6 @@ const BuyerReviewSubmissions = () => {
                   )}
                 </div>
 
-                {/* Meta Info */}
                 <div className="flex flex-wrap gap-4 text-xs text-base-content/50 mb-4 pb-3 border-b border-base-300">
                   <div className="flex items-center gap-1">
                     <Calendar size={12} />
@@ -140,20 +168,23 @@ const BuyerReviewSubmissions = () => {
                   </div>
                 </div>
 
-                {/* Actions */}
                 {submission.status === 'pending' && (
                   <div className="flex gap-3">
                     <button
                       className="flex-1 py-2 rounded-lg bg-green-500 text-white font-medium hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
                       onClick={() => handleApprove(submission._id)}
+                      disabled={submittingIds.has(submission._id)}
                     >
-                      <Check size={16} /> Approve
+                      {submittingIds.has(submission._id) ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
+                      {submittingIds.has(submission._id) ? 'Approving...' : 'Approve'}
                     </button>
                     <button
                       className="flex-1 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
                       onClick={() => handleReject(submission._id)}
+                      disabled={submittingIds.has(submission._id)}
                     >
-                      <X size={16} /> Reject
+                      {submittingIds.has(submission._id) ? <Loader2 className="animate-spin" size={16} /> : <X size={16} />}
+                      {submittingIds.has(submission._id) ? 'Rejecting...' : 'Reject'}
                     </button>
                   </div>
                 )}
@@ -166,41 +197,6 @@ const BuyerReviewSubmissions = () => {
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* Details Modal */}
-      {selectedSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setSelectedSubmission(null)}>
-          <div className="bg-base-200 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center p-5 border-b border-base-300">
-              <h3 className="text-xl font-bold text-base-content">Submission Details</h3>
-              <button onClick={() => setSelectedSubmission(null)} className="p-1 rounded-lg hover:bg-base-300 transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-5 space-y-4">
-              <div className="flex items-center gap-3">
-                <img src={selectedSubmission.worker_id?.photoURL || 'https://via.placeholder.com/40'} alt="" className="w-12 h-12 rounded-full" />
-                <div>
-                  <p className="font-semibold">{selectedSubmission.worker_id?.name}</p>
-                  <p className="text-sm text-base-content/60">{selectedSubmission.task_id?.title}</p>
-                </div>
-              </div>
-              <div>
-                <label className="text-xs text-base-content/50 uppercase tracking-wide">Submission</label>
-                <p className="mt-1 text-base-content">{selectedSubmission.submission_text}</p>
-              </div>
-              <div className="flex justify-between pt-3 border-t border-base-300">
-                <button className="flex-1 mr-2 py-2 rounded-lg bg-green-500 text-white" onClick={() => handleApprove(selectedSubmission._id)}>
-                  Approve
-                </button>
-                <button className="flex-1 ml-2 py-2 rounded-lg bg-red-500 text-white" onClick={() => handleReject(selectedSubmission._id)}>
-                  Reject
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>

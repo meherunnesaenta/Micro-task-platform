@@ -21,11 +21,18 @@ const ManageTasks = () => {
     setLoading(true);
     try {
       const response = await adminAPI.getAllTasks(page, limit);
-      setTasks(response.tasks || []);
-      setTotalTasks(response.total || 0);
+      
+      
+      
+      const tasksData = response.tasks || response.data?.tasks || response.data || [];
+      const totalData = response.total || response.data?.total || 0;
+      
+      setTasks(tasksData);
+      setTotalTasks(totalData);
     } catch (error) {
       console.error('Error fetching tasks:', error);
       toast.error('Failed to fetch tasks');
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -154,7 +161,7 @@ const ManageTasks = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
                         <User size={12} className="text-base-content/40" />
-                        <span className="text-sm">{task.buyerName || 'Unknown'}</span>
+                        <span className="text-sm">{task.buyer_name || 'Unknown'}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">{getStatusBadge(task.status)}</td>

@@ -20,10 +20,18 @@ const BuyerMyTasks = () => {
     try {
       setLoading(true);
       const response = await taskAPI.getMyTasks(pagination.currentPage, 10);
-      setTasks(response.tasks || []);
+
+
+
+      // ✅ Fix: Check if response has data property
+      const tasksData = response.data?.tasks || response.tasks || [];
+      const totalData = response.data?.total || response.total || 0;
+      const pagesData = response.data?.pages || response.pages || 1;
+
+      setTasks(tasksData);
       setPagination({
-        currentPage: response.currentPage || parseInt(response.page) || 1,
-        totalPages: response.pages || 1,
+        currentPage: pagination.currentPage,
+        totalPages: pagesData,
       });
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -48,7 +56,7 @@ const BuyerMyTasks = () => {
   const getStatusBadge = (task) => {
     const isActive = task.required_workers > 0;
     const isExpired = new Date(task.completion_date) < new Date();
-    
+
     if (isExpired) {
       return <span className="px-2 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-600">Expired</span>;
     }

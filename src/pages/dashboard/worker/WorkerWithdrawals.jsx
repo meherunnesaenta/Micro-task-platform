@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
 import { withdrawalAPI } from '../../../utils/endpoints';
+import { useRefreshUser } from '../../../hooks/useRefreshUser';
 import { AlertCircle, CheckCircle, Clock, DollarSign, Coins, CreditCard, History, Info } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const WorkerWithdrawals = () => {
-  const { user, refreshUser } = useAuth();
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm();
+  const { user } = useAuth();
+  const refreshUser = useRefreshUser();
+  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm();
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -19,10 +21,12 @@ const WorkerWithdrawals = () => {
     const fetchWithdrawals = async () => {
       try {
         const response = await withdrawalAPI.getMyWithdrawals(page, 10);
-        setWithdrawals(response.withdrawals || []);
+        const withdrawalsData = response.withdrawals || response.data?.withdrawals || response.data || [];
+        setWithdrawals(withdrawalsData);
       } catch (error) {
         console.error('Error fetching withdrawals:', error);
         toast.error('Failed to load withdrawal history');
+        setWithdrawals([]);
       } finally {
         setLoading(false);
       }
@@ -32,33 +36,49 @@ const WorkerWithdrawals = () => {
   }, [page]);
 
   const onSubmit = async (data) => {
-    if (user?.coins < parseInt(data.coins_to_withdraw)) {
-      toast.error('Insufficient coins');
+    const coinsToWithdrawNum = parseInt(data.coins_to_withdraw);
+    
+    if (isNaN(coinsToWithdrawNum)) {
+      toast.error('Please enter a valid coin amount');
       return;
     }
 
-    if (parseInt(data.coins_to_withdraw) < 200) {
-      toast.error('Minimum withdrawal is 200 coins ($10)');
+    if (user?.coins < coinsToWithdrawNum) {
+      toast.error(`Insufficient coins. You have ${user?.coins} coins`);
+      return;
+    }
+
+    if (coinsToWithdrawNum < 200) {
+      toast.error(`Minimum withdrawal is 200 coins ($10). You requested ${coinsToWithdrawNum} coins`);
       return;
     }
 
     try {
       const withdrawalData = {
-        withdrawal_coin: parseInt(data.coins_to_withdraw),
+        withdrawal_coin: coinsToWithdrawNum,
         payment_system: data.payment_system,
         account_number: data.account_number,
       };
 
       await withdrawalAPI.createWithdrawal(withdrawalData);
       toast.success('Withdrawal request submitted successfully!');
+      
+      // Refresh user data to update coin balance
       await refreshUser();
+      
       // Reset form
-      document.querySelector('form')?.reset();
+      setValue('coins_to_withdraw', '');
+      setValue('payment_system', '');
+      setValue('account_number', '');
+      
       // Refresh withdrawal list
       const response = await withdrawalAPI.getMyWithdrawals(1, 10);
       setWithdrawals(response.withdrawals || []);
+      
     } catch (error) {
-      toast.error(error.message || 'Withdrawal request failed');
+      console.error('Withdrawal error:', error);
+      const errorMsg = error.response?.data?.error || error.message || 'Withdrawal request failed';
+      toast.error(errorMsg);
     }
   };
 

@@ -17,26 +17,38 @@ const BuyerHome = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        setLoading(true);
+        console.log('Buyer stats fetch start');
+        
         const response = await taskAPI.getMyTasks(1, 100);
-        const tasks = response.tasks || [];
+        console.log('Buyer tasks response:', response);
+        
+        const tasksData = response.tasks || response.data?.tasks || [];
         
         let pending = 0;
         let spent = 0;
         
-        tasks.forEach(task => {
-          spent += task.required_workers * task.payable_amount;
+        tasksData.forEach(task => {
+          const totalCost = task.required_workers * task.payable_amount;
+          spent += totalCost;
           if (task.required_workers > 0) {
             pending++;
           }
         });
 
+        console.log('Buyer stats calculated:', {
+          totalTasks: tasksData.length,
+          pendingTasks: pending,
+          totalSpent: spent
+        });
+
         setStats({
-          totalTasks: tasks.length,
+          totalTasks: tasksData.length,
           pendingTasks: pending,
           totalSpent: spent,
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching buyer stats:', error);
         toast.error('Failed to fetch statistics');
       } finally {
         setLoading(false);

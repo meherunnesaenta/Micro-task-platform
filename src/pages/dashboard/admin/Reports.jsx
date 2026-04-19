@@ -32,33 +32,38 @@ const Reports = () => {
   const [dateRange, setDateRange] = useState('month');
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchReportStats();
-  }, [dateRange]);
-
   const fetchReportStats = async () => {
     setLoading(true);
     try {
+      console.log('Fetching reports for:', dateRange);
       const response = await adminAPI.getStats(dateRange);
+      console.log('Reports stats response:', response);
+      
+      const data = response?.data || response || {};
+      
       setStats({
-        totalWorkers: response.totalWorkers || 0,
-        totalBuyers: response.totalBuyers || 0,
-        totalTasks: response.totalTasks || 0,
-        totalSubmissions: response.totalSubmissions || 0,
-        totalCoins: response.totalCoins || 0,
-        totalPayment: response.totalPaymentAmount || 0,
-        platformGrowth: response.platformGrowth || 0,
-        weeklyGrowth: response.weeklyGrowth || 0,
-        monthlyActiveUsers: response.monthlyActiveUsers || 0,
-        completionRate: response.completionRate || 0,
+        totalWorkers: data.totalWorkers || 0,
+        totalBuyers: data.totalBuyers || 0,
+        totalTasks: data.totalTasks || 0,
+        totalSubmissions: data.totalSubmissions || 0,
+        totalCoins: data.totalCoins || 0,
+        totalPayment: data.totalPaymentAmount || data.totalPayment || 0,
+        platformGrowth: data.platformGrowth || 0,
+        weeklyGrowth: data.weeklyGrowth || 0,
+        monthlyActiveUsers: data.monthlyActiveUsers || 0,
+        completionRate: data.completionRate || 0,
       });
     } catch (error) {
-      console.error('Error fetching report stats:', error);
+      console.error('Error fetching report stats:', error.response?.data || error);
       toast.error('Failed to fetch statistics');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchReportStats();
+  }, [dateRange]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -72,13 +77,24 @@ const Reports = () => {
   };
 
   const reportCards = [
-    { title: 'Total Workers', value: stats.totalWorkers.toLocaleString(), icon: Users, color: 'bg-purple-500', trend: `${stats.weeklyGrowth > 0 ? '+' : ''}${stats.weeklyGrowth}%` },
+    { title: 'Total Workers', value: stats.totalWorkers.toLocaleString(), icon: Users, color: 'bg-purple-500', trend: `+${stats.weeklyGrowth}%` },
     { title: 'Total Buyers', value: stats.totalBuyers.toLocaleString(), icon: Briefcase, color: 'bg-blue-500', trend: '+1.2%' },
     { title: 'Active Tasks', value: stats.totalTasks.toLocaleString(), icon: Activity, color: 'bg-green-500', trend: '+4.8%' },
     { title: 'Total Submissions', value: stats.totalSubmissions.toLocaleString(), icon: BarChart3, color: 'bg-orange-500', trend: '+3.1%' },
     { title: 'Platform Revenue', value: `$${stats.totalPayment.toLocaleString()}`, icon: DollarSign, color: 'bg-red-500', trend: '+6.3%' },
     { title: 'Platform Growth', value: `${stats.platformGrowth}%`, icon: TrendingUp, color: 'bg-indigo-500', trend: 'This month' },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-base-content/60">Loading reports...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

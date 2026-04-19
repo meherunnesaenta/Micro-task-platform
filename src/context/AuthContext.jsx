@@ -8,24 +8,36 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth from localStorage + validate token
+  // Initialize auth from localStorage
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const initAuth = () => {
+      try {
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      // Validate token
-      refreshUser();
-    }
-    setLoading(false);
+
+
+        if (storedToken && storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
+          setToken(storedToken);
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   // Register user
   const register = async (userData) => {
     const response = await authAPI.register(userData);
-    const { token: newToken, user: newUser } = response;
+    const { token: newToken, user: newUser } = response.data;
 
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
@@ -39,7 +51,9 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (credentials) => {
     const response = await authAPI.login(credentials);
-    const { token: newToken, user: newUser } = response;
+
+
+    const { token: newToken, user: newUser } = response.data;
 
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
@@ -47,13 +61,13 @@ export const AuthProvider = ({ children }) => {
     setToken(newToken);
     setUser(newUser);
 
-    return response;
+    return { user: newUser, role: newUser.role };
   };
 
   // Google login
   const googleLogin = async (googleToken) => {
     const response = await authAPI.googleLogin(googleToken);
-    const { token: newToken, user: newUser } = response;
+    const { token: newToken, user: newUser } = response.data;
 
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
@@ -72,51 +86,49 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-
   // Update user profile
   const updateProfile = async (data) => {
     const response = await authAPI.updateProfile(data);
-    const updatedUser = { ...user, ...response };
+    const updatedUser = { ...user, ...response.data };
     localStorage.setItem('user', JSON.stringify(updatedUser));
     setUser(updatedUser);
     return response;
   };
 
-// Refresh current user from server
+  // Refresh current user from server
   const refreshUser = async () => {
     try {
       const response = await authAPI.getProfile();
-      localStorage.setItem('user', JSON.stringify(response));
-      setUser(response);
-      return response;
+      if (response.data) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+        setUser(response.data);
+        return response.data;
+      }
+      return null;
     } catch (error) {
       console.error('Refresh user failed:', error);
-      // Don't logout on refresh fail - keep local data
-      localStorage.removeItem('token');
-      setToken(null);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setToken(null);
+        setUser(null);
+      }
       return null;
     }
   };
-
 
   // Check if user is authenticated
   const isAuthenticated = !!token && !!user;
 
   // Check user role
   const hasRole = (role) => user?.role === role;
-
-  // Check if user is worker
   const isWorker = user?.role === 'worker';
-
-  // Check if user is buyer
   const isBuyer = user?.role === 'buyer';
-
-  // Check if user is admin
   const isAdmin = user?.role === 'admin';
-
 
   const value = {
     user,
+    setUser,
     token,
     loading,
     isAuthenticated,
@@ -131,7 +143,6 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     refreshUser,
   };
-
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

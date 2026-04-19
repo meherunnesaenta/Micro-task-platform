@@ -6,7 +6,7 @@ import { paymentAPI } from '../../../utils/endpoints';
 import { Coins, CreditCard, Zap, Shield, Award, X, Lock, Sparkles } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_dummy');
 
 const CoinPackage = ({ amount, coins, bonus, discountPercent, onSelect, isSelected }) => {
   const totalCoins = coins + bonus;
@@ -15,7 +15,7 @@ const CoinPackage = ({ amount, coins, bonus, discountPercent, onSelect, isSelect
   return (
     <div className={`relative bg-base-200 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer ${
       isSelected ? 'ring-2 ring-primary shadow-lg' : ''
-    }`} onClick={() => onSelect({ amount, coins: totalCoins })}>
+    }`} onClick={() => onSelect({ amount, coins: totalCoins, bonus })}>
       {discountPercent > 0 && (
         <div className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
           Save {discountPercent}%
@@ -44,6 +44,7 @@ const CoinPackage = ({ amount, coins, bonus, discountPercent, onSelect, isSelect
   );
 };
 
+// ✅ Fixed PaymentForm
 const PaymentForm = ({ selectedPackage, onClose }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -60,16 +61,50 @@ const PaymentForm = ({ selectedPackage, onClose }) => {
         return;
       }
 
-      const response = await paymentAPI.purchaseCoins({
-        amount: selectedPackage.amount,
-        coins: selectedPackage.coins
+      const cardElement = elements.getElement(CardElement);
+      
+      if (!cardElement) {
+        toast.error('Card element not found');
+        return;
+      }
+
+      // Create payment method from card element
+      const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
       });
 
+      if (paymentMethodError) {
+        throw new Error(paymentMethodError.message);
+      }
+
+      console.log('Payment method created:', paymentMethod.id);
+
+      // Send to backend for coin purchase
+      const response = await paymentAPI.purchaseCoins({
+        amount: selectedPackage.amount,
+        coins: selectedPackage.coins,
+        paymentMethodId: paymentMethod.id
+      });
+
+      console.log('Purchase response:', response);
+
       toast.success(`Successfully purchased ${selectedPackage.coins} coins!`);
+      
+      // Refresh user data to update coin balance
       await refreshUser();
+      
+      // Close modal
       onClose();
+      
+      // Reload page to reflect changes
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Payment failed');
+      console.error('Payment error:', error);
+      toast.error(error.response?.data?.error || error.message || 'Payment failed');
     } finally {
       setLoading(false);
     }
@@ -94,6 +129,7 @@ const PaymentForm = ({ selectedPackage, onClose }) => {
             }}
           />
         </div>
+        <p className="text-xs text-base-content/40 mt-2">Test card: 4242 4242 4242 4242</p>
       </div>
 
       <div className="bg-primary/10 rounded-lg p-4 space-y-2">
@@ -105,13 +141,27 @@ const PaymentForm = ({ selectedPackage, onClose }) => {
           <span className="text-base-content/60">You'll receive:</span>
           <span className="font-bold text-primary">{selectedPackage.coins} Coins</span>
         </div>
+        {selectedPackage.bonus > 0 && (
+          <div className="flex justify-between text-sm">
+            <span className="text-base-content/60">Bonus Coins:</span>
+            <span className="font-bold text-green-600">+{selectedPackage.bonus}</span>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-3">
-        <button type="button" className="flex-1 px-4 py-2 rounded-lg border border-base-300 hover:bg-base-300 transition-colors" onClick={onClose}>
+        <button 
+          type="button" 
+          className="flex-1 px-4 py-2 rounded-lg border border-base-300 hover:bg-base-300 transition-colors" 
+          onClick={onClose}
+        >
           Cancel
         </button>
-        <button type="submit" className="flex-1 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-50" disabled={loading}>
+        <button 
+          type="submit" 
+          className="flex-1 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-50" 
+          disabled={loading || !stripe}
+        >
           {loading ? 'Processing...' : `Pay $${selectedPackage.amount}`}
         </button>
       </div>

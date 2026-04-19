@@ -20,12 +20,38 @@ const BuyerPaymentHistory = () => {
   const fetchPaymentHistory = async () => {
     try {
       setLoading(true);
-      const response = await paymentAPI.getHistory(pagination.currentPage, 10);
-      setPayments(response.payments || []);
+      const response = await paymentAPI.getPaymentHistory(pagination.currentPage, 10);
+      
+      console.log('Payment history response:', response); // Debug
+      
+      // ✅ Handle different response structures
+      let paymentsData = [];
+      let totalAmountData = 0;
+      let currentPageData = 1;
+      let totalPagesData = 1;
+      
+      if (response && response.data) {
+        paymentsData = response.data.payments || response.data || [];
+        totalAmountData = response.data.totalAmount || 0;
+        currentPageData = response.data.currentPage || 1;
+        totalPagesData = response.data.totalPages || 1;
+      } else if (response && response.payments) {
+        paymentsData = response.payments;
+        totalAmountData = response.totalAmount || 0;
+        currentPageData = response.currentPage || 1;
+        totalPagesData = response.totalPages || 1;
+      } else if (Array.isArray(response)) {
+        paymentsData = response;
+      }
+      
+      console.log('Payments data:', paymentsData);
+      console.log('Total amount:', totalAmountData);
+      
+      setPayments(paymentsData);
       setPagination({
-        currentPage: response.currentPage || 1,
-        totalPages: response.totalPages || 1,
-        totalAmount: response.totalAmount || 0,
+        currentPage: currentPageData,
+        totalPages: totalPagesData,
+        totalAmount: totalAmountData,
       });
     } catch (error) {
       console.error('Error fetching payment history:', error);
@@ -119,6 +145,12 @@ const BuyerPaymentHistory = () => {
           <CreditCard size={48} className="mx-auto text-base-content/20 mb-3" />
           <h2 className="text-xl font-bold text-base-content mb-2">No payment history</h2>
           <p className="text-base-content/60">You haven't made any purchases yet</p>
+          <button 
+            onClick={() => window.location.href = '/dashboard/buyer/purchase-coin'}
+            className="mt-4 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            Purchase Coins
+          </button>
         </div>
       ) : (
         <>
@@ -148,11 +180,11 @@ const BuyerPaymentHistory = () => {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1">
                           <DollarSign size={14} className="text-green-500" />
-                          <span className="font-semibold">${payment.amount.toFixed(2)}</span>
+                          <span className="font-semibold">${payment.amount?.toFixed(2) || 0}</span>
                         </div>
                        </td>
                       <td className="px-4 py-3">
-                        <span className="font-medium text-primary">{payment.coins} coins</span>
+                        <span className="font-medium text-primary">{payment.coins || 0} coins</span>
                        </td>
                       <td className="px-4 py-3">
                         {payment.bonus_coins > 0 ? (
@@ -162,7 +194,7 @@ const BuyerPaymentHistory = () => {
                         )}
                        </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs font-mono text-base-content/60">{payment.transaction_id?.substring(0, 12)}...</span>
+                        <span className="text-xs font-mono text-base-content/60">{payment.transaction_id?.substring(0, 12) || 'N/A'}...</span>
                        </td>
                       <td className="px-4 py-3">{getStatusBadge(payment.status)}</td>
                       <td className="px-4 py-3">
@@ -181,8 +213,8 @@ const BuyerPaymentHistory = () => {
                             <Download size={16} />
                           </button>
                         </div>
-                       </td>
-                     </tr>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -231,11 +263,11 @@ const BuyerPaymentHistory = () => {
               </div>
               <div className="flex justify-between items-center pb-3 border-b border-base-300">
                 <span className="text-base-content/60">Amount:</span>
-                <span className="font-bold text-green-600 text-lg">${selectedPayment.amount.toFixed(2)}</span>
+                <span className="font-bold text-green-600 text-lg">${selectedPayment.amount?.toFixed(2) || 0}</span>
               </div>
               <div className="flex justify-between items-center pb-3 border-b border-base-300">
                 <span className="text-base-content/60">Coins Purchased:</span>
-                <span className="font-medium text-primary">{selectedPayment.coins} coins</span>
+                <span className="font-medium text-primary">{selectedPayment.coins || 0} coins</span>
               </div>
               {selectedPayment.bonus_coins > 0 && (
                 <div className="flex justify-between items-center pb-3 border-b border-base-300">
@@ -245,11 +277,11 @@ const BuyerPaymentHistory = () => {
               )}
               <div className="flex justify-between items-center pb-3 border-b border-base-300">
                 <span className="text-base-content/60">Total Coins:</span>
-                <span className="font-bold text-primary text-lg">{selectedPayment.coins + (selectedPayment.bonus_coins || 0)} coins</span>
+                <span className="font-bold text-primary text-lg">{(selectedPayment.coins || 0) + (selectedPayment.bonus_coins || 0)} coins</span>
               </div>
               <div className="flex justify-between items-center pb-3 border-b border-base-300">
                 <span className="text-base-content/60">Transaction ID:</span>
-                <span className="text-xs font-mono text-base-content/70">{selectedPayment.transaction_id}</span>
+                <span className="text-xs font-mono text-base-content/70">{selectedPayment.transaction_id || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-base-content/60">Status:</span>

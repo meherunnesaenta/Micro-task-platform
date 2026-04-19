@@ -17,15 +17,23 @@ const WorkerTaskDetails = () => {
   useEffect(() => {
     const fetchTask = async () => {
       try {
+        console.log('Fetching task:', taskId);
         const response = await taskAPI.getTaskById(taskId);
-        setTask(response);
+        console.log('Task response:', response);
+        
+        const taskData = response.data || response;
+        console.log('Task data:', taskData);
+        
+        setTask(taskData);
       } catch (error) {
-        toast.error('Failed to load task');
+        console.error('Task fetch error:', error.response?.data || error);
+        toast.error('Failed to load task - ' + (error.response?.data?.error || error.message || 'Unknown error'));
         navigate('/dashboard/worker/tasks');
       } finally {
         setLoading(false);
       }
     };
+
 
     fetchTask();
   }, [taskId, navigate]);
@@ -36,8 +44,11 @@ const WorkerTaskDetails = () => {
         task_id: taskId,
         submission_details: data.submission_details,
       };
+      console.log('Submitting data:', submissionData); // Debug
 
-      await submissionAPI.submitTask(submissionData);
+      const response = await submissionAPI.submitTask(submissionData);
+      console.log('Submission response:', response); // Debug
+
       toast.success('Task submitted successfully!');
       setSubmitted(true);
 
@@ -45,7 +56,8 @@ const WorkerTaskDetails = () => {
         navigate('/dashboard/worker/submissions');
       }, 2000);
     } catch (error) {
-      toast.error(error.message || 'Failed to submit task');
+      console.error('Submission error:', error);
+      toast.error(error.response?.data?.error || error.message || 'Failed to submit task');
     }
   };
 

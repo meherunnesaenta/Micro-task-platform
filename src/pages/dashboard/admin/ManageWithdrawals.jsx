@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withdrawalAPI } from '../../../utils/endpoints';
-import { CheckCircle, XCircle, Clock, DollarSign, User, Mail, Calendar, Search, AlertCircle, CreditCard } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, DollarSign, User, Mail, Calendar, Search, AlertCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const ManageWithdrawals = () => {
@@ -20,18 +20,46 @@ const ManageWithdrawals = () => {
     setLoading(true);
     try {
       const response = await withdrawalAPI.getPendingWithdrawals(page, limit);
-      setWithdrawals(response.withdrawals || []);
-      setTotalWithdrawals(response.total || 0);
+      console.log('Admin withdrawals response:', response);
+      
+      let withdrawalsData = [];
+      let totalData = 0;
+      
+      if (response && response.data) {
+        withdrawalsData = response.data.withdrawals || [];
+        totalData = response.data.total || 0;
+      } else if (response && response.withdrawals) {
+        withdrawalsData = response.withdrawals;
+        totalData = response.total || 0;
+      } else if (Array.isArray(response)) {
+        withdrawalsData = response;
+      }
+      
+      const mappedWithdrawals = withdrawalsData.map(w => ({
+        _id: w._id,
+        workerName: w.worker_name,
+        workerEmail: w.worker_email,
+        amount: w.withdrawal_amount,
+        withdrawalCoin: w.withdrawal_coin,
+        paymentSystem: w.payment_system,
+        bankAccount: w.account_number,
+        requestedAt: w.withdraw_date,
+        status: w.status
+      }));
+      
+      setWithdrawals(mappedWithdrawals);
+      setTotalWithdrawals(totalData);
     } catch (error) {
       console.error('Error fetching withdrawals:', error);
       toast.error('Failed to fetch withdrawals');
+      setWithdrawals([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleApprove = async (withdrawalId) => {
-    if (window.confirm('Approve this withdrawal request? This will deduct coins from the worker\'s account.')) {
+    if (window.confirm('Approve this withdrawal request? This will process the payout.')) {
       try {
         await withdrawalAPI.approveWithdrawal(withdrawalId);
         toast.success('Withdrawal approved successfully!');
@@ -39,7 +67,7 @@ const ManageWithdrawals = () => {
         setSelectedWithdrawal(null);
       } catch (error) {
         console.error('Error approving withdrawal:', error);
-        toast.error('Failed to approve withdrawal');
+        toast.error(error.response?.data?.error || 'Failed to approve withdrawal');
       }
     }
   };
@@ -53,7 +81,7 @@ const ManageWithdrawals = () => {
         setSelectedWithdrawal(null);
       } catch (error) {
         console.error('Error rejecting withdrawal:', error);
-        toast.error('Failed to reject withdrawal');
+        toast.error(error.response?.data?.error || 'Failed to reject withdrawal');
       }
     }
   };
@@ -65,8 +93,10 @@ const ManageWithdrawals = () => {
       Bkash: '📱',
       Rocket: '🚀',
       Nagad: '⭐',
+      bank_transfer: '🏦',
     };
-    return icons[system] || '💵';
+    const systemLower = system?.toLowerCase();
+    return icons[systemLower] || '💵';
   };
 
   const filteredWithdrawals = withdrawals.filter(
@@ -265,26 +295,26 @@ const ManageWithdrawals = () => {
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div>
-                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Amount</label>
+                  <label className="text-xs text-base-content/50 uppercase tracking-wider">Amount</label>
                   <p className="mt-1 font-bold text-green-600 text-xl">${selectedWithdrawal.amount}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Coins Deducted</label>
+                  <label className="text-xs text-base-content/50 uppercase tracking-wider">Coins Deducted</label>
                   <p className="mt-1 font-semibold text-primary">{selectedWithdrawal.withdrawalCoin?.toLocaleString()} coins</p>
                 </div>
                 <div>
-                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Payment System</label>
+                  <label className="text-xs text-base-content/50 uppercase tracking-wider">Payment System</label>
                   <p className="mt-1 flex items-center gap-1">
                     <span className="text-lg">{getPaymentSystemIcon(selectedWithdrawal.paymentSystem)}</span>
                     {selectedWithdrawal.paymentSystem}
                   </p>
                 </div>
                 <div>
-                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Account Number</label>
+                  <label className="text-xs text-base-content/50 uppercase tracking-wider">Account Number</label>
                   <p className="mt-1 text-sm">{selectedWithdrawal.bankAccount}</p>
                 </div>
                 <div className="col-span-2">
-                  <label className="text-xs text-base-content/50 uppercase tracking-wide">Requested Date</label>
+                  <label className="text-xs text-base-content/50 uppercase tracking-wider">Requested Date</label>
                   <p className="mt-1 text-sm">{new Date(selectedWithdrawal.requestedAt).toLocaleString()}</p>
                 </div>
               </div>

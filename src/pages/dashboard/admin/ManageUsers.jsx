@@ -23,11 +23,18 @@ const ManageUsers = () => {
     setLoading(true);
     try {
       const response = await adminAPI.getAllUsers(page, limit, filterRole);
-      setUsers(response.users || []);
-      setTotalUsers(response.total || 0);
+      
+      
+      
+      const usersData = response.users || response.data?.users || response.data || [];
+      const totalData = response.total || response.data?.total || 0;
+      
+      setUsers(usersData);
+      setTotalUsers(totalData);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Failed to fetch users');
+      setUsers([]);
     } finally {
       setLoading(false);
     }

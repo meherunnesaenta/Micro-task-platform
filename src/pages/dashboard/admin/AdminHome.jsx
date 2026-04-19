@@ -13,20 +13,39 @@ const AdminHome = () => {
     totalCoins: 0,
     totalPayment: 0,
   });
+  const [quickStats, setQuickStats] = useState({
+    activeSessions: 0,
+    pendingReviews: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        setLoading(true);
+        
+        console.log('Fetching admin stats...');
         const response = await adminAPI.getStats();
+        console.log('AdminHome stats response:', response);
+        
+        // Robust response handling
+        let statsData = response?.data || response || {};
+        
         setStats({
-          totalWorkers: response.totalWorkers || 0,
-          totalBuyers: response.totalBuyers || 0,
-          totalCoins: response.totalCoins || 0,
-          totalPayment: response.totalPaymentAmount || 0,
+          totalWorkers: statsData.totalWorkers || 0,
+          totalBuyers: statsData.totalBuyers || 0,
+          totalCoins: statsData.totalCoins || 0,
+          totalPayment: statsData.totalPaymentAmount || statsData.totalPayments || statsData.totalPayment || 0,
         });
+        
+        // Set quick stats from response or calculate
+        setQuickStats({
+          activeSessions: statsData.activeSessions || (statsData.totalWorkers + statsData.totalBuyers) || 0,
+          pendingReviews: statsData.pendingReviews || statsData.totalTasks || 0,
+        });
+        
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching admin stats:', error.response?.data || error.message);
         toast.error('Failed to fetch statistics');
       } finally {
         setLoading(false);
@@ -52,7 +71,7 @@ const AdminHome = () => {
 
   const recentActivities = [
     { id: 1, type: 'new', message: 'New user registered - Sarah Johnson', time: '2 hours ago', badge: 'NEW', badgeColor: 'bg-green-500' },
-    { id: 2, type: 'pending', message: '5 withdrawal requests awaiting approval', time: 'Updated just now', badge: 'PENDING', badgeColor: 'bg-yellow-500' },
+    { id: 2, type: 'pending', message: `${quickStats.pendingReviews} withdrawal requests awaiting approval`, time: 'Updated just now', badge: 'PENDING', badgeColor: 'bg-yellow-500' },
     { id: 3, type: 'completed', message: '12 tasks completed this hour', time: '1 hour ago', badge: 'COMPLETED', badgeColor: 'bg-blue-500' },
   ];
 
@@ -125,14 +144,14 @@ const AdminHome = () => {
           </div>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats - Dynamic */}
         <div className="lg:col-span-2 grid grid-cols-2 gap-4">
           <div className="bg-base-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-2">
               <Activity size={18} className="text-primary" />
               <span className="text-sm font-medium text-base-content/60">Active Sessions</span>
             </div>
-            <p className="text-2xl font-bold text-base-content">1,234</p>
+            <p className="text-2xl font-bold text-base-content">{quickStats.activeSessions.toLocaleString()}</p>
             <p className="text-xs text-green-600 mt-1">+23 today</p>
           </div>
           <div className="bg-base-200 rounded-xl p-4">
@@ -140,7 +159,7 @@ const AdminHome = () => {
               <Clock size={18} className="text-primary" />
               <span className="text-sm font-medium text-base-content/60">Pending Reviews</span>
             </div>
-            <p className="text-2xl font-bold text-base-content">42</p>
+            <p className="text-2xl font-bold text-base-content">{quickStats.pendingReviews.toLocaleString()}</p>
             <p className="text-xs text-yellow-600 mt-1">Requires attention</p>
           </div>
         </div>

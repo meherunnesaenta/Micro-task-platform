@@ -17,11 +17,43 @@ const WorkerSubmissionDetails = () => {
     const fetchSubmission = async () => {
       try {
         setLoading(true);
-        const submissionData = await submissionAPI.getTaskSubmissions(id);
-        setSubmission(submissionData.submission);
-        const taskData = await taskAPI.getTaskById(submissionData.task_id);
-        setTask(taskData);
+        
+        const submissionResponse = await submissionAPI.getSubmissionById(id);
+        console.log('Full response:', submissionResponse);
+        
+        // ✅ Handle nested response structure { submission: {...} }
+        let submissionData = submissionResponse.data?.submission || 
+                            submissionResponse.submission || 
+                            submissionResponse.data || 
+                            submissionResponse;
+        
+        console.log('Submission data:', submissionData);
+        console.log('Task ID object:', submissionData?.task_id);
+        console.log('Task ID value:', submissionData?.task_id?._id);
+        
+        setSubmission(submissionData);
+        
+        // ✅ Get task ID correctly
+        let taskId = null;
+        if (submissionData?.task_id) {
+          if (typeof submissionData.task_id === 'object' && submissionData.task_id._id) {
+            taskId = submissionData.task_id._id;
+          } else if (typeof submissionData.task_id === 'string') {
+            taskId = submissionData.task_id;
+          }
+        }
+        
+        console.log('Extracted Task ID:', taskId);
+        
+        if (taskId) {
+          const taskResponse = await taskAPI.getTaskById(taskId);
+          const taskData = taskResponse.data || taskResponse;
+          console.log('Task data:', taskData);
+          setTask(taskData);
+        }
+        
       } catch (err) {
+        console.error('Submission fetch error:', err);
         setError('Failed to load submission details');
         toast.error('Failed to load submission details');
       } finally {
@@ -76,6 +108,11 @@ const WorkerSubmissionDetails = () => {
       </div>
     );
   }
+
+  // ✅ Get task details from submission.task_id (already populated)
+  const taskDetail = submission.task_id?.task_detail || task?.task_detail || 'No description available';
+  const taskSubmissionInfo = submission.task_id?.submission_info || task?.submission_info || 'No submission info available';
+  const taskIdForResubmit = submission.task_id?._id || submission.task_id || task?._id;
 
   return (
     <div className="space-y-6">
@@ -145,12 +182,22 @@ const WorkerSubmissionDetails = () => {
               <p className="text-sm text-base-content/70 mb-2">
                 <span className="font-semibold text-base-content">Posted by:</span> {submission.buyer_name}
               </p>
-              <p className="text-sm text-base-content/70">
+              <p className="text-sm text-base-content/70 mb-2">
                 <span className="font-semibold text-base-content">Task Description:</span>
               </p>
               <p className="text-sm text-base-content mt-1 leading-relaxed">
-                {task?.task_detail || 'No description available'}
+                {taskDetail}
               </p>
+              {taskSubmissionInfo && taskSubmissionInfo !== 'No submission info available' && (
+                <>
+                  <p className="text-sm text-base-content/70 mt-3 mb-1">
+                    <span className="font-semibold text-base-content">Submission Guidelines:</span>
+                  </p>
+                  <p className="text-sm text-base-content leading-relaxed">
+                    {taskSubmissionInfo}
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
@@ -168,14 +215,14 @@ const WorkerSubmissionDetails = () => {
           </div>
 
           {/* Resubmit Section for Rejected */}
-          {submission.status === 'rejected' && task && (
+          {submission.status === 'rejected' && taskIdForResubmit && (
             <div className="bg-yellow-500/10 rounded-xl p-5 border border-yellow-500/30">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h3 className="font-bold text-base-content mb-1">Task Still Available</h3>
                   <p className="text-sm text-base-content/60">Your submission was rejected. You can resubmit the task.</p>
                 </div>
-                <Link to={`/dashboard/worker/tasks/${task._id}`} className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors text-center">
+                <Link to={`/dashboard/worker/tasks/${taskIdForResubmit}`} className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors text-center">
                   Resubmit Task
                 </Link>
               </div>

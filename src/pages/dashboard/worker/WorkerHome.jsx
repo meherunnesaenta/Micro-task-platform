@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const WorkerHome = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [stats, setStats] = useState({
     totalSubmissions: 0,
     pendingSubmissions: 0,
@@ -17,14 +17,53 @@ const WorkerHome = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await submissionAPI.getApprovedSubmissions();
-        const earnings = response.approvedSubmissions || [];
+        await refreshUser();
+      } catch (e) {
+        console.log('Refresh user failed:', e);
+      }
+      try {
+        setLoading(true); 
+        console.log('=== RAW API RESPONSES ===');
+        const approvedResponse = await submissionAPI.getApprovedSubmissions();
+        console.log('Approved RAW:', approvedResponse);
         
-        setStats({
-          totalSubmissions: earnings.length,
-          pendingSubmissions: 0,
-          totalEarnings: response.totalEarnings || 0,
-        });
+        const mySubsResponse = await submissionAPI.getMySubmissions(1, 100);
+        console.log('MySubs RAW:', mySubsResponse);
+        
+        // Ultra defensive parsing
+        let approvedSubs = [];
+        let totalEarnings = 0;
+        let allSubmissions = [];
+        
+        // Parse approved - ALL possible structures
+        approvedSubs = approvedResponse?.approvedSubmissions || approvedResponse?.data?.approvedSubmissions || [];
+        totalEarnings = approvedResponse?.totalEarnings || approvedResponse?.data?.totalEarnings || 0;
+        if (Array.isArray(approvedResponse) && approvedSubs.length === 0) {
+          approvedSubs = approvedResponse;
+          totalEarnings = approvedResponse.reduce((sum, sub) => sum + (sub.payable_amount || 0), 0);
+        }
+        
+        // Parse my submissions - ALL possible structures
+        allSubmissions = mySubsResponse?.submissions || mySubsResponse?.data?.submissions || mySubsResponse?.data || [];
+        if (Array.isArray(mySubsResponse) && allSubmissions.length === 0) {
+          allSubmissions = mySubsResponse;
+        }
+        
+        const pendingSubs = Array.isArray(allSubmissions) ? allSubmissions.filter(sub => sub.status === 'pending').length : 0;
+        
+        const finalStats = {
+          totalSubmissions: Array.isArray(allSubmissions) ? allSubmissions.length : 0,
+          pendingSubmissions: pendingSubs,
+          totalEarnings: totalEarnings,
+        };
+        
+        console.log('PARSED - Approved length:', approvedSubs.length);
+        console.log('PARSED - All subs length:', allSubmissions.length);
+        console.log('PARSED - Pending count:', pendingSubs);
+        console.log('PARSED - Total earnings:', totalEarnings);
+        console.log('FINAL STATS:', finalStats);
+        
+        setStats(finalStats);
       } catch (error) {
         console.error('Error fetching stats:', error);
         toast.error('Failed to fetch statistics');
@@ -39,7 +78,7 @@ const WorkerHome = () => {
   const statCards = [
     { icon: <Clock size={24} />, label: 'Total Submissions', value: stats.totalSubmissions, color: 'bg-blue-500' },
     { icon: <CheckCircle size={24} />, label: 'Pending Submissions', value: stats.pendingSubmissions, color: 'bg-yellow-500' },
-    { icon: <DollarSign size={24} />, label: 'Total Earnings', value: `$${stats.totalEarnings}`, color: 'bg-green-500' },
+{ icon: <Award size={24} />, label: 'Total Coins Earned', value: stats.totalEarnings.toLocaleString(), color: 'bg-green-500' },
   ];
 
   const quickActions = [
@@ -97,7 +136,7 @@ const WorkerHome = () => {
             <h2 className="text-xl font-bold mb-1">Great job, {user?.name?.split(' ')[0]}!</h2>
             <p className="text-white/80 text-sm">
               You have completed <strong className="text-white">{stats.totalSubmissions}</strong> tasks and earned{' '}
-              <strong className="text-white">${stats.totalEarnings}</strong> so far.
+<strong className="text-white">{stats.totalEarnings.toLocaleString()} coins</strong> so far.
             </p>
           </div>
           <div className="flex gap-3">

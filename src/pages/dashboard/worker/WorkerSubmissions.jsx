@@ -13,16 +13,23 @@ const WorkerSubmissions = () => {
   const [total, setTotal] = useState(0);
   const [filterStatus, setFilterStatus] = useState('all');
 
-  useEffect(() => {
+useEffect(() => {
     const fetchSubmissions = async () => {
       try {
         setLoading(true);
         const response = await submissionAPI.getMySubmissions(page, 10);
-        setSubmissions(response.submissions || []);
-        setTotal(response.total || 0);
+        
+        console.log('WorkerSubmissions API Response:', response); // Debug
+        
+        const submissionsData = response.submissions || response.data?.submissions || response.data || [];
+        const totalData = response.total || response.data?.total || 0;
+        
+        setSubmissions(submissionsData);
+        setTotal(totalData);
       } catch (error) {
         console.error('Error fetching submissions:', error);
         toast.error('Failed to fetch submissions');
+        setSubmissions([]);
       } finally {
         setLoading(false);
       }
@@ -30,6 +37,11 @@ const WorkerSubmissions = () => {
 
     fetchSubmissions();
   }, [page]);
+
+  const refreshSubmissions = async () => {
+    await fetchSubmissions();
+    await refreshUser(); // Refresh user to get updated coins
+  };
 
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {

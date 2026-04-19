@@ -15,7 +15,7 @@ const TopWorker = () => {
     setLoading(true);
     try {
 
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/public/top-workers`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/public/top-workers`);
       
       if (response.data.success) {
         setWorkers(response.data.workers);

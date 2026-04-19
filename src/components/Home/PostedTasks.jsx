@@ -21,13 +21,13 @@ const PostedTasks = () => {
     setLoading(true);
     try {
       // API call to public endpoint (no auth token needed)
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/public/tasks?page=${page}&limit=6`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tasks?page=${page}&limit=6`);
       
-      if (response.data.success) {
-        setTasks(response.data.tasks);
-        setTotalPages(response.data.pages);
-      } else {
-        setTasks([]);
+      const tasksData = response.data.tasks || response.data || [];
+      setTasks(tasksData);
+      setTotalPages(response.data.pages || 1);
+      if (tasksData.length === 0) {
+        toast.info('No tasks available at the moment');
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);

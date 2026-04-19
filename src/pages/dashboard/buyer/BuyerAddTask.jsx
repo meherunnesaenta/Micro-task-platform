@@ -4,10 +4,11 @@ import { Plus, X, Upload, Calendar, Users, DollarSign, FileText, Image, AlertCir
 import { useAuth } from '../../../context/AuthContext';
 import { taskAPI } from '../../../utils/endpoints';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const BuyerAddTask = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth(); // ✅ Add refreshUser
   const [formData, setFormData] = useState({
     task_title: '',
     task_detail: '',
@@ -104,13 +105,11 @@ const BuyerAddTask = () => {
         const imageFormData = new FormData();
         imageFormData.append('image', formData.task_image);
         try {
-          const imgResponse = await fetch('https://api.imgbb.com/1/upload?key=' + import.meta.env.VITE_IMGBB_API_KEY, {
-            method: 'POST',
-            body: imageFormData
+          const imgResponse = await axios.post('https://api.imgbb.com/1/upload?key=' + import.meta.env.VITE_IMGBB_API_KEY, imageFormData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
           });
-          const imgData = await imgResponse.json();
-          if (imgData.success) {
-            taskImageUrl = imgData.data.url;
+          if (imgResponse.data.success) {
+            taskImageUrl = imgResponse.data.data.url;
           }
         } catch (imgError) {
           console.warn('Image upload failed:', imgError);
@@ -125,13 +124,23 @@ const BuyerAddTask = () => {
         payable_amount: parseFloat(formData.payable_amount),
         completion_date: formData.completion_date,
         submission_info: formData.submission_info.trim(),
-        ...(taskImageUrl && { task_image_url: taskImageUrl })
+        ...(taskImageUrl && { task_image_url: taskImageUrl }),
+        buyer_email: user?.email,
+        buyer_name: user?.name,
+        buyer_id: user?._id
       };
 
-      await taskAPI.createTask(taskPayload);
+      const response = await taskAPI.createTask(taskPayload);
+      console.log('Task created response:', response);
+      
+      // ✅ Refresh user data to get updated coins
+      const updatedUser = await refreshUser();
+      console.log('Updated user coins:', updatedUser?.coins);
+      
       toast.success('Task created successfully!');
       navigate('/dashboard/buyer/my-tasks');
     } catch (error) {
+      console.error('Error:', error);
       let errorMessage = 'Failed to create task';
       if (error.response?.data?.error) errorMessage = error.response.data.error;
       else if (error.response?.data?.message) errorMessage = error.response.data.message;
@@ -146,7 +155,6 @@ const BuyerAddTask = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div>
         <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-3">
           <Plus size={14} className="text-primary" />
@@ -159,7 +167,6 @@ const BuyerAddTask = () => {
       <div className="bg-base-200 rounded-2xl p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Task Title */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Task Title <span className="text-red-500">*</span>
@@ -178,7 +185,6 @@ const BuyerAddTask = () => {
               </div>
             </div>
 
-            {/* Task Description */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Task Description <span className="text-red-500">*</span>
@@ -194,7 +200,6 @@ const BuyerAddTask = () => {
               />
             </div>
 
-            {/* Submission Instructions */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Submission Instructions <span className="text-red-500">*</span>
@@ -210,7 +215,6 @@ const BuyerAddTask = () => {
               />
             </div>
 
-            {/* Category */}
             <div>
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Category <span className="text-red-500">*</span>
@@ -229,7 +233,6 @@ const BuyerAddTask = () => {
               </select>
             </div>
 
-            {/* Required Workers */}
             <div>
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Number of Workers <span className="text-red-500">*</span>
@@ -248,7 +251,6 @@ const BuyerAddTask = () => {
               </div>
             </div>
 
-            {/* Payable Amount */}
             <div>
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Amount per Worker (USD) <span className="text-red-500">*</span>
@@ -268,7 +270,6 @@ const BuyerAddTask = () => {
               </div>
             </div>
 
-            {/* Completion Date */}
             <div>
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Completion Deadline <span className="text-red-500">*</span>
@@ -286,7 +287,6 @@ const BuyerAddTask = () => {
               </div>
             </div>
 
-            {/* Task Image */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-base-content/80 mb-2">
                 Task Image <span className="text-base-content/40 text-xs">(Optional)</span>
@@ -315,7 +315,6 @@ const BuyerAddTask = () => {
             </div>
           </div>
 
-          {/* Cost Summary */}
           <div className="bg-primary/10 rounded-xl p-5 mt-4">
             <h3 className="text-lg font-bold text-base-content mb-3">Cost Summary</h3>
             <div className="space-y-2">
@@ -340,7 +339,6 @@ const BuyerAddTask = () => {
             </div>
           </div>
 
-          {/* Form Actions */}
           <div className="flex gap-3 pt-4">
             <button
               type="button"

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../utils/endpoints';
-import { GoogleLogin } from '@react-oauth/google';
+// import { GoogleLogin } from '@react-oauth/google';
 import { Mail, Lock, AlertCircle, Loader, Eye, EyeOff, ArrowRight, Shield, Sparkles } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -31,6 +31,7 @@ const Login = () => {
     try {
       const response = await login(data);
       toast.success('Welcome back! Login successful');
+       const userRole = response?.user?.role || response?.role;
       
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', data.email);
@@ -226,7 +227,7 @@ const Login = () => {
             </div>
 
             {/* Google Login */}
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
@@ -235,7 +236,7 @@ const Login = () => {
                 shape="pill"
                 theme="outline"
               />
-            </div>
+            </div> */}
 
             {/* Sign Up Link */}
             <p className="text-center text-sm text-base-content/60 mt-6">
