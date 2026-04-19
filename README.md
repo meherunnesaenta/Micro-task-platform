@@ -1,106 +1,217 @@
-# MicroTask Earn - Micro Tasking & Earning Platform
+# 🚀 Micro Task and Earning Platform - TaskEarn
 
-A comprehensive micro-tasking platform where workers earn money by completing small tasks and buyers outsource tasks to a global workforce.
+A full-stack micro-task platform where users can earn money by completing small tasks or post tasks to get work done by verified workers.
 
-## Live Site URL
-[https://microtash.vercel.app/](https://microtash.vercel.app)
+## 🌐 Live Site URL
+[https://microtash.vercel.app](https://microtash.vercel.app)
 
-## Admin Access (For Testing)
-- **Admin Email:** Contact the developer for admin credentials
-- **Admin Password:** Contact the developer for admin credentials
+## 👑 Admin Credentials
+- **Email:** `admin.microtask@gmail.com`
+- **Password:** `*******`
 
-> **Note:** For demo purposes, you can register as a buyer/worker or request admin access from the developer.
+## ✨ Key Features
 
-## GitHub Repositories
-- **Client Side:** [https://github.com/meherunnesaenta/Micro-task-platform](https://github.com/meherunnesaenta/Micro-task-platform)
-- **Server Side:** [https://github.com/meherunnesaenta/Micro-task-platform-server](https://github.com/meherunnesaenta/Micro-task-platform-server)
+### For Workers:
+- ✅ Browse and filter available tasks by category
+- ✅ Submit task completions with detailed proof
+- ✅ Track submission status (pending/approved/rejected)
+- ✅ View earnings in coins (20 coins = $1)
+- ✅ Request withdrawal with minimum 200 coins ($10)
+- ✅ View withdrawal history and status
+- ✅ Complete profile management
+- ✅ Real-time notifications for approvals/rejections
 
-## Key Features
+### For Buyers:
+- ✅ Create tasks with detailed instructions
+- ✅ Set required workers and payable amount
+- ✅ Upload task images (ImgBB integration)
+- ✅ Review worker submissions
+- ✅ Approve/Reject submissions with coin rewards
+- ✅ Purchase coins via Stripe payment
+- ✅ View payment history and task statistics
+- ✅ Edit/Delete posted tasks
 
-- **Three Role System:** Worker, Buyer, and Admin dashboards with role-specific functionalities
-- **Secure Authentication:** Email/Password and Google Sign-In with JWT token-based authorization
-- **Real-time Notifications:** Instant alerts for task approvals, rejections, withdrawals, and submissions
-- **Stripe Payment Integration:** Secure coin purchases with multiple payment tiers (10 coins = $1)
-- **Image Upload System:** Integrated ImgBB for profile pictures and task images
-- **Task Discovery:** Browse available tasks with real-time required worker counts for workers
-- **Task Submission:** Submit work with detailed proof and track submission status
-- **Earnings Dashboard:** Track total earnings, pending submissions, and approved tasks for workers
-- **Coin Withdrawal:** Convert earned coins to real money (20 coins = $1) with minimum 200 coins ($10) requirement
-- **Task Management:** Create, update, and delete tasks with custom requirements for buyers
-- **Submission Review:** Review worker submissions with approve/reject functionality for buyers
-- **Coin Purchase:** Buy coins via Stripe with multiple package options for buyers
-- **User Management:** Manage all users, update roles, and remove accounts for admin
-- **Withdrawal Processing:** Review and approve worker withdrawal requests for admin
-- **Task Oversight:** Monitor and delete inappropriate tasks for admin
-- **Platform Analytics:** View total workers, buyers, coin circulation, and payments
-- **Fully Responsive:** Seamless experience across mobile, tablet, and desktop devices
-- **Interactive Animations:** Engaging homepage with animated elements and carousel sliders
-- **Private Route Protection:** Persistent sessions without login page redirects on reload
-- **Pagination:** Efficient data loading on submission pages
+### For Admin:
+- ✅ Complete platform overview dashboard
+- ✅ Manage all users (update roles, delete users)
+- ✅ Manage all tasks across platform
+- ✅ Process withdrawal requests (approve/reject)
+- ✅ View platform analytics and reports
+- ✅ Monitor platform growth and revenue
 
-## Technologies Used
+### General Features:
+- 🎨 Modern responsive design with Dark/Light theme
+- 🔐 Secure JWT authentication
+- 📱 Mobile-friendly responsive layout
+- 🔔 Real-time notification system
+- 📊 Interactive dashboard with statistics
+- 💳 Stripe payment integration
+- 🖼️ Image upload with ImgBB
+- 📄 Pagination on all lists
+- 🎭 Role-based access control (Worker/Buyer/Admin)
 
-### Frontend
-- React.js 18
+## 📸 Screenshots
+
+**Admin Dashboard Preview:**
+```
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+```
+
+
+## 🏗️ Project Structure
+
+```
+client/
+├── index.html                   # Main HTML entry
+├── package.json                 # Dependencies & scripts
+├── vite.config.js               # Vite config
+├── tailwind.config.js           # Tailwind config
+├── .env                         # Environment variables
+├── public/                      # Static assets
+│   ├── favicon.svg
+│   └── icons.svg
+├── src/
+│   ├── App.jsx                  # Main app component
+│   ├── main.jsx                 # Entry point
+│   ├── index.css                # Global styles
+│   ├── App.css                  # App styles
+│   ├── context/                 # React Context
+│   │   └── AuthContext.jsx
+│   ├── hooks/                   # Custom hooks
+│   │   └── useRefreshUser.js
+│   ├── utils/                   # Utilities
+│   │   ├── api.js
+│   │   └── endpoints.js
+├── components/              # Reusable components
+│   │   ├── shared/              # Navbar, Footer, Logo, NotificationBell, ProtectedRoute
+│   │   ├── dashboard/           # DashboardLayout
+│   │   └── Home/                # HeroSlider, Banner, Features, TopWorker, PostedTasks
+│   └── assets/                  # Images (hero.png, react.svg, vite.svg)
+│       └── hero.png
+│   └── pages/                   # Page components
+│       ├── Home.jsx
+│       ├── NotFound.jsx
+│       ├── auth/
+│       │   ├── Login.jsx
+│       │   └── Register.jsx
+│       └── dashboard/
+│           ├── admin/
+│           │   ├── AdminHome.jsx
+│           │   ├── AdminProfile.jsx
+│           │   ├── ManageTasks.jsx
+│           │   ├── ManageUsers.jsx
+│           │   ├── ManageWithdrawals.jsx
+│           │   └── Reports.jsx
+│           ├── buyer/
+│           │   ├── BuyerHome.jsx
+│           │   ├── BuyerAddTask.jsx
+│           │   ├── BuyerMyTasks.jsx
+│           │   ├── BuyerReviewSubmissions.jsx
+│           │   ├── BuyerPurchaseCoin.jsx
+│           │   ├── BuyerPaymentHistory.jsx
+│           │   ├── BuyerProfile.jsx
+│           │   └── BuyerTaskDetails.jsx
+│           └── worker/
+│               ├── WorkerHome.jsx
+│               ├── WorkerTaskList.jsx
+│               ├── WorkerTaskDetails.jsx
+│               ├── WorkerSubmissions.jsx
+│               ├── WorkerSubmissionDetails.jsx
+│               ├── WorkerWithdrawals.jsx
+│               └── WorkerProfile.jsx
+└── styles/                      # CSS files
+    └── home.css
+```
+
+
+### Frontend:
+- React 18 with Vite
+- Tailwind CSS + DaisyUI
 - React Router DOM v6
-- Tailwind CSS / Custom CSS
-- Swiper.js for carousels
 - React Hook Form
-- Axios for API calls
-- Firebase Authentication
-- Stripe.js for payments
+- Axios
+- Lucide React Icons
+- Swiper.js (Carousel)
+- React Toastify
+- Stripe.js
 
-### Backend
-- Node.js
-- Express.js
+### Backend:
+- Node.js with Express
 - MongoDB with Mongoose
-- JWT for authentication
-- Stripe SDK
+- JWT Authentication
+- Bcrypt for password hashing
+- Stripe API
+- ImgBB API
 
-## Getting Started
+### Deployment:
+- Frontend: Vercel
+- Backend: Render / Cyclic
+- Database: MongoDB Atlas
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB Atlas account
-- Firebase project
-- Stripe account (for payments)
-- vercel
+## 📦 Installation Guide
 
-### Installation
+### Prerequisites:
+- Node.js (v18+)
+- npm/yarn
 
-**1. Clone the repository**
-
+### Quick Start:
+```bash
 git clone https://github.com/meherunnesaenta/Micro-task-platform.git
-cd microtask-earn-client
+cd client
 
-**2. Install dependencies**
 npm install
 
-**3. Create environment variables**
-REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
-REACT_APP_FIREBASE_PROJECT_ID=your_project_id
-REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-REACT_APP_FIREBASE_APP_ID=your_app_id
-REACT_APP_STRIPE_PUBLIC_KEY=your_stripe_public_key
-REACT_APP_API_BASE_URL=http://localhost:5000
-REACT_APP_IMGBB_API_KEY=your_imgbb_api_key
+cp .env.example .env
+```
 
-**4. Start development server**
-npm start
+### .env Configuration (Demo):
+```
+VITE_API_URL=http://localhost:5000/api
+VITE_STRIPE_PUBLIC_KEY=pk_test_...
+VITE_IMGBB_API_KEY=abc123...
+```
+**Note:** Replace with your actual keys
 
+### Run Development Server:
+```bash
+npm run dev
+```
 
-## Deployment
-## Frontend (Vercel Hosting)
+### Build for Production:
+```bash
 npm run build
-vercel deploy
+npm run preview
+```
 
-## Backend (Render/Heroku)
-Ensure MongoDB connection string is properly configured in environment variables.
+**Backend API**: https://github.com/meherunnesaenta/Micro-task-platform-server
 
-## License
-This project is for assessment purposes only. All rights reserved.
 
-## Support
-For support, please create an issue in the GitHub repository.
+## 📋 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register |
+| POST | `/api/auth/login` | Login |
+| GET | `/api/tasks` | Get tasks |
+| POST | `/api/tasks` | Create task |
+| PUT | `/api/submissions/:id/approve` | Approve submission |
+
+## 🔑 Test Credentials
+
+**Worker:**
+- `ali.reza.work@gmail.com` / `Worker@123`
+
+**Buyer:**
+- `techstart.buyer@gmail.com` / `Buyer@123`
+
+**Admin:**
+- `admin.microtask@gmail.com` / `*****`
+
+## 📂 Repository Links
+- Frontend: https://github.com/meherunnesaenta/Micro-task-platform
+- Backend: https://github.com/meherunnesaenta/Micro-task-platform-server
+
+## 📄 License
+MIT License
+
