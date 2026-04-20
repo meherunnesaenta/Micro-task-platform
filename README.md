@@ -50,7 +50,6 @@ A full-stack micro-task platform where users can earn money by completing small 
 - 📄 Pagination on all lists
 - 🎭 Role-based access control (Worker/Buyer/Admin)
 
-```
 
 
 ## 🏗️ Project Structure
