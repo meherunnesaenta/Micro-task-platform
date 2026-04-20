@@ -50,12 +50,6 @@ A full-stack micro-task platform where users can earn money by completing small 
 - 📄 Pagination on all lists
 - 🎭 Role-based access control (Worker/Buyer/Admin)
 
-## 📸 Screenshots
-
-**Admin Dashboard Preview:**
-```
-![Admin Dashboard Preview](https://github.com/user-attachments/assets/5dcbd383-c04d-4e92-a659-1b6633ca3c60)
-
 ```
 
 
