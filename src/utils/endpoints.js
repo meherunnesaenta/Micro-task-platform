@@ -78,7 +78,6 @@ export const paymentAPI = {
   dummyPayment: (data) => api.post('/payments/dummy-payment', data),
   getPaymentHistory: async (page = 1, limit = 10) => {
     const response = await api.get(`/payments/history?page=${page}&limit=${limit}`);
-    console.log('Payment history API response:', response.data);
     return response.data;
   },
   purchaseCoins: (data) => api.post('/payments/purchase-coins', data),

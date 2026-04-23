@@ -17,12 +17,11 @@ const WorkerTaskDetails = () => {
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        console.log('Fetching task:', taskId);
+
         const response = await taskAPI.getTaskById(taskId);
-        console.log('Task response:', response);
+
         
         const taskData = response.data || response;
-        console.log('Task data:', taskData);
         
         setTask(taskData);
       } catch (error) {
@@ -44,10 +43,9 @@ const WorkerTaskDetails = () => {
         task_id: taskId,
         submission_details: data.submission_details,
       };
-      console.log('Submitting data:', submissionData); // Debug
+      
 
       const response = await submissionAPI.submitTask(submissionData);
-      console.log('Submission response:', response); // Debug
 
       toast.success('Task submitted successfully!');
       setSubmitted(true);

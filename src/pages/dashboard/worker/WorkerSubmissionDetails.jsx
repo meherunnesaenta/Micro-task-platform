@@ -19,17 +19,13 @@ const WorkerSubmissionDetails = () => {
         setLoading(true);
         
         const submissionResponse = await submissionAPI.getSubmissionById(id);
-        console.log('Full response:', submissionResponse);
+
         
         // ✅ Handle nested response structure { submission: {...} }
         let submissionData = submissionResponse.data?.submission || 
                             submissionResponse.submission || 
                             submissionResponse.data || 
                             submissionResponse;
-        
-        console.log('Submission data:', submissionData);
-        console.log('Task ID object:', submissionData?.task_id);
-        console.log('Task ID value:', submissionData?.task_id?._id);
         
         setSubmission(submissionData);
         
@@ -43,12 +39,11 @@ const WorkerSubmissionDetails = () => {
           }
         }
         
-        console.log('Extracted Task ID:', taskId);
         
         if (taskId) {
           const taskResponse = await taskAPI.getTaskById(taskId);
           const taskData = taskResponse.data || taskResponse;
-          console.log('Task data:', taskData);
+       
           setTask(taskData);
         }
         

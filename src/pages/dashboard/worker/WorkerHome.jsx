@@ -19,17 +19,16 @@ const WorkerHome = () => {
       try {
         await refreshUser();
       } catch (e) {
-        console.log('Refresh user failed:', e);
+        
       }
       try {
         setLoading(true); 
-        console.log('=== RAW API RESPONSES ===');
+        
         const approvedResponse = await submissionAPI.getApprovedSubmissions();
-        console.log('Approved RAW:', approvedResponse);
+        
         
         const mySubsResponse = await submissionAPI.getMySubmissions(1, 100);
-        console.log('MySubs RAW:', mySubsResponse);
-        
+       
         // Ultra defensive parsing
         let approvedSubs = [];
         let totalEarnings = 0;
@@ -56,12 +55,7 @@ const WorkerHome = () => {
           pendingSubmissions: pendingSubs,
           totalEarnings: totalEarnings,
         };
-        
-        console.log('PARSED - Approved length:', approvedSubs.length);
-        console.log('PARSED - All subs length:', allSubmissions.length);
-        console.log('PARSED - Pending count:', pendingSubs);
-        console.log('PARSED - Total earnings:', totalEarnings);
-        console.log('FINAL STATS:', finalStats);
+
         
         setStats(finalStats);
       } catch (error) {

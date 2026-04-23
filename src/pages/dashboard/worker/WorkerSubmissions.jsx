@@ -19,7 +19,6 @@ useEffect(() => {
         setLoading(true);
         const response = await submissionAPI.getMySubmissions(page, 10);
         
-        console.log('WorkerSubmissions API Response:', response); // Debug
         
         const submissionsData = response.submissions || response.data?.submissions || response.data || [];
         const totalData = response.total || response.data?.total || 0;

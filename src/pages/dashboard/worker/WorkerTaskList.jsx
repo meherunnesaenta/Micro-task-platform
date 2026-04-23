@@ -19,7 +19,6 @@ const WorkerTaskList = () => {
         setLoading(true);
         const response = await taskAPI.getAllTasks(page, 10);
         
-        console.log('WorkerTaskList API Response:', response); // Debug
         
         const tasksData = response.tasks || response.data?.tasks || response.data || [];
         const totalData = response.total || response.data?.total || 0;
@@ -27,7 +26,6 @@ const WorkerTaskList = () => {
         setTasks(tasksData);
         setTotal(totalData);
       } catch (error) {
-        console.error('Error fetching tasks:', error);
         toast.error('Failed to load tasks');
         setTasks([]);
       } finally {
